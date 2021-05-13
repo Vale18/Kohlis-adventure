@@ -21,7 +21,7 @@ export default class Game extends Phaser.Scene {
     preload() {
         this.load.atlas('penguin', 'assets/penguin.png', 'assets/penguin.json')
         this.load.image('tiles', 'assets/sheet.png')
-        this.load.tilemapTiledJSON('tilemap', 'assets/game.json')
+        this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
     }
 
     create() {
@@ -33,7 +33,7 @@ export default class Game extends Phaser.Scene {
 
         const objectsLayer = map.getObjectLayer('objects')
         objectsLayer.objects.forEach(objData => {
-            const { x = 0, y = 0, name, width = 0 } = objData
+            const { x =0, y = 0, name, width = 0 } = objData
 
             switch (name) {
                 case 'penguin-spawn': {
