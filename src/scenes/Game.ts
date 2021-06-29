@@ -5,7 +5,7 @@ export default class Game extends Phaser.Scene {
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
 
-    private penguin?: Phaser.Physics.Matter.Sprite
+    private player?: Phaser.Physics.Matter.Sprite
     private playerController?: PlayerController
 
     private isTouchingGround = false
@@ -22,9 +22,11 @@ export default class Game extends Phaser.Scene {
         this.load.atlas('coal-guy', 'assets/coal_guy.png', 'assets/coal_guy.json')
         this.load.image('tiles', 'assets/sprites-12.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
+        this.load.image('diamond', 'assets/diamond.png')
     }
 
     create() {
+        this.scene.launch('ui')
         const map = this.make.tilemap({ key: 'tilemap' })
         const tileset = map.addTilesetImage('Miene', 'tiles')
 
@@ -37,14 +39,29 @@ export default class Game extends Phaser.Scene {
 
             switch (name) {
                 case 'penguin-spawn': {
-                    this.penguin = this.matter.add.sprite(x + (width*0.5), y, 'coal-guy')
+                    this.player = this.matter.add.sprite(x + (width*0.5), y, 'coal-guy')
+                        .setScale(0.8)
                         .setFixedRotation()
 
-                    this.playerController = new PlayerController(this.penguin, this.cursors)
+                    this.playerController = new PlayerController(this.player, this.cursors)
 
-                    this.cameras.main.startFollow(this.penguin)
+                    this.cameras.main.startFollow(this.player)
+
+                    
                     break
                 }
+                case 'diamond':{
+                    const diamont = this.matter.add.sprite(x+(width*0.5),y,'diamond', undefined ,{
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    diamont.setScale(0.3)
+                    diamont.setData('type', 'diamond')
+
+                    break
+                }
+
+                
             }
         })
 

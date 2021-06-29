@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
 import StateMachine from '../statemachine/StateMachine'
+import { events } from './EventCenter'
+
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class PlayerController{
@@ -33,8 +35,31 @@ export default class PlayerController{
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
-            if(this.stateMachine.isCurrentState('jump')){
-                this.stateMachine.setState('idle')
+            const body = data.bodyB as MatterJS.BodyType
+            const gameObject = body.gameObject
+
+            if(!gameObject){
+                return
+            }
+
+            if(gameObject instanceof Phaser.Physics.Matter.TileBody){
+
+                if(this.stateMachine.isCurrentState('jump')){
+                    this.stateMachine.setState('idle')
+                }
+                return
+            }
+
+            const sprite = gameObject as Phaser.Physics.Matter.Sprite
+            const type = sprite.getData('type')
+
+            switch(type){
+                case 'diamond':{
+                    
+                    events.emit('diamond-collected')
+                    sprite.destroy()
+                    break
+                }
             }
         })
     }
@@ -93,6 +118,7 @@ export default class PlayerController{
 
     private jumpOnEnter(){
         this.sprite.setVelocityY(-10)
+        this.sprite.play('player-jump')
     }
 
     private jumpOnUpdate(){
@@ -130,9 +156,9 @@ export default class PlayerController{
             key: 'player-jump',
             frameRate: 10,
             frames: this.sprite.anims.generateFrameNames('coal-guy', {
-                start: 12,
-                end: 15,
-                prefix: 'coal-guy-running-',
+                start: 18,
+                end: 19,
+                prefix: 'coal-guy-jumping-',
                 suffix: '.png'
             }),
             repeat: -1
