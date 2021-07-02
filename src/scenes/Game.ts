@@ -19,8 +19,8 @@ export default class Game extends Phaser.Scene {
     }
 
     preload() {
-        this.load.atlas('coal-guy', 'assets/coal_guy.png', 'assets/coal_guy.json')
-        this.load.image('tiles', 'assets/sprites-12.png')
+        this.load.atlas('coal-guy', 'assets/coal_guy2.png', 'assets/coal_guy2.json')
+        this.load.image('tiles', 'assets/tiles-12.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
         this.load.image('diamond', 'assets/diamond.png')
     }

@@ -27,6 +27,11 @@ export default class UI extends Phaser.Scene{
         })
 
         events.on('diamond-collected',this.handelDiamondCollected, this)
+
+        this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
+         events.off('diamond-collected',this.handelDiamondCollected, this)
+
+        })
     }
 
     private handelDiamondCollected(){

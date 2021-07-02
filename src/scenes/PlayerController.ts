@@ -137,7 +137,7 @@ export default class PlayerController{
     private createAnimations() {
         this.sprite.anims.create({
             key: 'player-idle',
-            frames: [{ key: 'coal-guy', frame: 'coal-guy-running-12.png' }]
+            frames: [{ key: 'coal-guy', frame: 'coal-guy-chill-11.svg' }]
         })
 
         this.sprite.anims.create({
@@ -147,7 +147,7 @@ export default class PlayerController{
                 start: 12,
                 end: 15,
                 prefix: 'coal-guy-running-',
-                suffix: '.png'
+                suffix: '.svg'
             }),
             repeat: -1
         })
@@ -159,7 +159,7 @@ export default class PlayerController{
                 start: 18,
                 end: 19,
                 prefix: 'coal-guy-jumping-',
-                suffix: '.png'
+                suffix: '.svg'
             }),
             repeat: -1
         })
