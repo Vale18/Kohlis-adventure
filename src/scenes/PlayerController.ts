@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import StateMachine from '../statemachine/StateMachine'
 import { events } from './EventCenter'
+import ObsticalesController from './ObsticalesController'
 
 type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
@@ -9,10 +10,12 @@ export default class PlayerController{
     private sprite: Phaser.Physics.Matter.Sprite
     private cursors: CursorKeys
     private stateMachine: StateMachine
+    private obsticales : ObsticalesController
 
-    constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys){
+    constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.sprite = sprite
         this.cursors = cursors
+        this.obsticales = obsticales
 
         this.createAnimations()
 
@@ -26,16 +29,35 @@ export default class PlayerController{
         .addState('walk',{
             onEnter: this.walkOnEnter,
             onUpdate: this.walkOnUpdate,
-            onExit:this.walkOnExet
+            onExit:this.walkOnExit
         })
         .addState('jump', {
             onEnter: this.jumpOnEnter,
             onUpdate: this.jumpOnUpdate
         })
+        .addState('readInfo', {
+            onEnter: this.readOnEnter,
+        })
+        .addState('hitbox-hit', {
+            onEnter: this.hitboxhitOnEnter,
+            onUpdate: this.hitboxhitOnUpdate,
+            // onExit: this.hitboxhitOnExit
+        })
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
             const body = data.bodyB as MatterJS.BodyType
+
+            if(this.obsticales.is('hitboxs', body)){
+                this.stateMachine.setState('hitbox-hit')
+                return
+            }
+
+            if(this.obsticales.is('info', body)){
+                events.emit('info')
+                this.stateMachine.setState('readInfo')
+            }
+
             const gameObject = body.gameObject
 
             if(!gameObject){
@@ -45,6 +67,11 @@ export default class PlayerController{
             if(gameObject instanceof Phaser.Physics.Matter.TileBody){
 
                 if(this.stateMachine.isCurrentState('jump')){
+                    this.stateMachine.setState('idle')
+                }
+                if(this.stateMachine.isCurrentState('hitbox-hit')){
+                    
+                    console.log('now idle')
                     this.stateMachine.setState('idle')
                 }
                 return
@@ -58,6 +85,18 @@ export default class PlayerController{
                     
                     events.emit('diamond-collected')
                     sprite.destroy()
+                    break
+                }
+                case 'info':{
+                    this.stateMachine.setState('readInfo')
+                    console.log("Schild 1")
+                    events.emit('info')
+                    break
+                }
+                case 'info2':{
+                    this.stateMachine.setState('readInfo')
+                    events.emit('info2')
+                    console.log("Schild 2")
                     break
                 }
             }
@@ -110,9 +149,10 @@ export default class PlayerController{
         if (spaceJustPressd) {
             this.stateMachine.setState('jump')
         }
+        
     }
 
-    private walkOnExet(){
+    private walkOnExit(){
         this.sprite.stop()
     }
 
@@ -133,6 +173,34 @@ export default class PlayerController{
             this.sprite.flipX = false
         }
     }
+
+    private readOnEnter(){
+        console.log("readInfo")
+        
+        this.stateMachine.setState("walk")
+    }
+
+    private hitboxhitOnEnter(){
+        this.sprite.setVelocityY(-12)
+        this.sprite.play('player-hurt')
+        // this.stateMachine.setState('jump')
+    }
+
+    private hitboxhitOnUpdate(){
+        const speed = 8
+        if (this.cursors.left.isDown) {
+            this.sprite.setVelocityX(-speed)
+            this.sprite.flipX = true
+
+        } else if (this.cursors.right.isDown) {
+            this.sprite.setVelocityX(speed)
+
+            this.sprite.flipX = false
+        }
+    }
+
+    
+
 
     private createAnimations() {
         this.sprite.anims.create({
@@ -159,6 +227,18 @@ export default class PlayerController{
                 start: 18,
                 end: 19,
                 prefix: 'coal-guy-jumping-',
+                suffix: '.svg'
+            }),
+            repeat: -1
+        })
+
+        this.sprite.anims.create({
+            key: 'player-hurt',
+            frameRate: 10,
+            frames: this.sprite.anims.generateFrameNames('coal-guy', {
+                start: 20,
+                end: 21,
+                prefix: 'coal_guy_hurt-',
                 suffix: '.svg'
             }),
             repeat: -1

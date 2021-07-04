@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import PlayerController from './PlayerController'
+import ObsticalesController from './ObsticalesController'
 
 export default class Game extends Phaser.Scene {
 
@@ -7,6 +8,7 @@ export default class Game extends Phaser.Scene {
 
     private player?: Phaser.Physics.Matter.Sprite
     private playerController?: PlayerController
+    private obstacles!: ObsticalesController
 
     private isTouchingGround = false
 
@@ -16,6 +18,7 @@ export default class Game extends Phaser.Scene {
 
     init() {
         this.cursors = this.input.keyboard.createCursorKeys()
+        this.obstacles = new ObsticalesController()
     }
 
     preload() {
@@ -29,21 +32,24 @@ export default class Game extends Phaser.Scene {
         this.scene.launch('ui')
         const map = this.make.tilemap({ key: 'tilemap' })
         const tileset = map.addTilesetImage('Miene', 'tiles')
+    
 
         const ground = map.createLayer('ground', tileset)
         ground.setCollisionByProperty({ collides: true })
+        
+        const overlay = map.createLayer('overlay', tileset)
 
         const objectsLayer = map.getObjectLayer('objects')
         objectsLayer.objects.forEach(objData => {
-            const { x = 0, y = 0, name, width = 0 } = objData
-
+            const { x = 0, y = 0, name, width = 0, height = 0 } = objData
+        
             switch (name) {
                 case 'penguin-spawn': {
                     this.player = this.matter.add.sprite(x + (width*0.5), y, 'coal-guy')
                         .setScale(0.8)
                         .setFixedRotation()
 
-                    this.playerController = new PlayerController(this.player, this.cursors)
+                    this.playerController = new PlayerController(this.player, this.cursors, this.obstacles)
 
                     this.cameras.main.startFollow(this.player)
 
@@ -59,6 +65,30 @@ export default class Game extends Phaser.Scene {
                     diamont.setData('type', 'diamond')
 
                     break
+                }
+                case 'hitbox':{
+                    const hitbox = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                    } )
+                    this.obstacles.add('hitboxs', hitbox)
+                    break
+                }
+                case 'info':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width,height,{
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    console.log(this)
+                    this.obstacles.add('info', info)
+                    break
+                }
+                case 'info2':{
+                    const info = this.matter.add.sprite(x+(width*0.5), y, 'diamond', undefined,{
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    info.setVisible(false)
+                    info.setData('type', 'info2', )
                 }
 
                 
