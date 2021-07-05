@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 
 import Game from './scenes/Game'
 import UI from './scenes/UI'
-import TitleScene from './scenes/TilteScene'
+import TitleScene from './scenes/TitleScene'
 const config: Phaser.Types.Core.GameConfig = {
 	type: Phaser.AUTO,
 	width: 600,
