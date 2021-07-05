@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="13">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="15">
  <editorsettings>
   <export target="assets/game2.json" format="json"/>
  </editorsettings>
@@ -243,7 +243,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="1" name="penguin-spawn" x="1058.75" y="1814.33" width="68.75" height="69.0833"/>
+  <object id="1" name="penguin-spawn" x="2388.51" y="1818.81" width="68.75" height="69.0833"/>
   <object id="4" name="info" x="771" y="1795.33" width="207.333" height="121.333">
    <properties>
     <property name="InfoID" type="int" value="0"/>
@@ -255,5 +255,6 @@
   <object id="8" name="hitbox" x="1337" y="1823.5" width="62.5" height="15.5"/>
   <object id="11" name="hitbox" x="1472.25" y="1823.75" width="62.5" height="15.5"/>
   <object id="12" name="hitbox" x="1252.33" y="1851" width="70" height="39"/>
+  <object id="13" name="health" x="2594.67" y="1820" width="70.6667" height="66.6667"/>
  </objectgroup>
 </map>

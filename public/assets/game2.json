@@ -47,8 +47,8 @@
                  "type":"",
                  "visible":true,
                  "width":68.75,
-                 "x":1058.75,
-                 "y":1814.33
+                 "x":2388.50757575758,
+                 "y":1818.81484848485
                 }, 
                 {
                  "height":121.3333,
@@ -132,6 +132,17 @@
                  "width":70,
                  "x":1252.33333333333,
                  "y":1851
+                }, 
+                {
+                 "height":66.6666666666667,
+                 "id":13,
+                 "name":"health",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":70.6666666666665,
+                 "x":2594.66666666667,
+                 "y":1820
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -140,7 +151,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":13,
+ "nextobjectid":15,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",

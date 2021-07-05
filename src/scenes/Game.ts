@@ -26,6 +26,7 @@ export default class Game extends Phaser.Scene {
         this.load.image('tiles', 'assets/tiles-12.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
         this.load.image('diamond', 'assets/diamond.png')
+        this.load.image('health', 'assets/healing.png')
     }
 
     create() {
@@ -64,6 +65,16 @@ export default class Game extends Phaser.Scene {
                     diamont.setScale(0.3)
                     diamont.setData('type', 'diamond')
 
+                    break
+                }
+                case 'health':{
+                    const health = this.matter.add.sprite(x+(width*0.5),y, 'health', undefined ,{
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    health.setScale(0.3)
+                    health.setData('type', 'health') 
+                    health.setData('healthPoints', 10)
                     break
                 }
                 case 'hitbox':{

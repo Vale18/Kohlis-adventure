@@ -12,6 +12,7 @@ export default class PlayerController{
     private cursors: CursorKeys
     private stateMachine: StateMachine
     private obsticales : ObsticalesController
+    private health = 100
 
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
@@ -22,6 +23,7 @@ export default class PlayerController{
         this.createAnimations()
 
         this.stateMachine = new StateMachine(this, 'player')
+
 
         this.stateMachine.addState('idle',{
             onEnter: this.idleOnEnter,
@@ -85,6 +87,13 @@ export default class PlayerController{
                 case 'diamond':{
                     
                     events.emit('diamond-collected')
+                    sprite.destroy()
+                    break
+                }
+                case 'health':{
+                    const value = sprite.getData('healthPoints') 
+                    this.health += Phaser.Math.Clamp(value, 0, 100)
+                    events.emit('health-changed', this.health)
                     sprite.destroy()
                     break
                 }
@@ -170,6 +179,8 @@ export default class PlayerController{
 
     private hitboxhitOnEnter(){
         this.sprite.setVelocityY(-12)
+        this.health = Phaser.Math.Clamp(this.health - 10, 0,100)
+        events.emit('health-changed', this.health)
         const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
         const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
         this.scene.tweens.addCounter({
