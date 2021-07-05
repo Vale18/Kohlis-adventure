@@ -49,7 +49,7 @@ export default class Game extends Phaser.Scene {
                         .setScale(0.8)
                         .setFixedRotation()
 
-                    this.playerController = new PlayerController(this.player, this.cursors, this.obstacles)
+                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles)
 
                     this.cameras.main.startFollow(this.player)
 
@@ -83,12 +83,12 @@ export default class Game extends Phaser.Scene {
                     break
                 }
                 case 'info2':{
-                    const info = this.matter.add.sprite(x+(width*0.5), y, 'diamond', undefined,{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
                         isStatic: true,
                         isSensor: true,
                     })
-                    info.setVisible(false)
-                    info.setData('type', 'info2', )
+                    this.obstacles.add('info2', info)
+                    break
                 }
 
                 

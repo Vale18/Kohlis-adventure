@@ -7,12 +7,14 @@ type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class PlayerController{
 
+    private scene: Phaser.Scene
     private sprite: Phaser.Physics.Matter.Sprite
     private cursors: CursorKeys
     private stateMachine: StateMachine
     private obsticales : ObsticalesController
 
-    constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
+        this.scene = scene
         this.sprite = sprite
         this.cursors = cursors
         this.obsticales = obsticales
@@ -35,12 +37,9 @@ export default class PlayerController{
             onEnter: this.jumpOnEnter,
             onUpdate: this.jumpOnUpdate
         })
-        .addState('readInfo', {
-            onEnter: this.readOnEnter,
-        })
         .addState('hitbox-hit', {
             onEnter: this.hitboxhitOnEnter,
-            onUpdate: this.hitboxhitOnUpdate,
+            // onUpdate: this.hitboxhitOnUpdate,
             // onExit: this.hitboxhitOnExit
         })
         .setState('idle')
@@ -50,12 +49,16 @@ export default class PlayerController{
 
             if(this.obsticales.is('hitboxs', body)){
                 this.stateMachine.setState('hitbox-hit')
-                return
+                
             }
 
             if(this.obsticales.is('info', body)){
                 events.emit('info')
-                this.stateMachine.setState('readInfo')
+            }
+
+
+            if(this.obsticales.is('info2', body)){
+                events.emit('info2')
             }
 
             const gameObject = body.gameObject
@@ -70,8 +73,6 @@ export default class PlayerController{
                     this.stateMachine.setState('idle')
                 }
                 if(this.stateMachine.isCurrentState('hitbox-hit')){
-                    
-                    console.log('now idle')
                     this.stateMachine.setState('idle')
                 }
                 return
@@ -85,18 +86,6 @@ export default class PlayerController{
                     
                     events.emit('diamond-collected')
                     sprite.destroy()
-                    break
-                }
-                case 'info':{
-                    this.stateMachine.setState('readInfo')
-                    console.log("Schild 1")
-                    events.emit('info')
-                    break
-                }
-                case 'info2':{
-                    this.stateMachine.setState('readInfo')
-                    events.emit('info2')
-                    console.log("Schild 2")
                     break
                 }
             }
@@ -176,28 +165,39 @@ export default class PlayerController{
 
     private readOnEnter(){
         console.log("readInfo")
-        
         this.stateMachine.setState("walk")
     }
 
     private hitboxhitOnEnter(){
         this.sprite.setVelocityY(-12)
-        this.sprite.play('player-hurt')
-        // this.stateMachine.setState('jump')
+        const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
+        const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: 100,
+            duration: 100,
+            repeat: 2,
+            yoyo: true,
+            ease: Phaser.Math.Easing.Sine.InOut,
+            onUpdate: tween => {
+                const value = tween.getValue()
+                const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+                    startColor,
+                    endColor,
+                    100,
+                    value
+                )
+                const color = Phaser.Display.Color.GetColor(
+                    colorObject.r,
+                    colorObject.g,
+                    colorObject.b
+                )
+                this.sprite.setTint(color)
+            }
+        })
+        this.stateMachine.setState('jump')
     }
 
-    private hitboxhitOnUpdate(){
-        const speed = 8
-        if (this.cursors.left.isDown) {
-            this.sprite.setVelocityX(-speed)
-            this.sprite.flipX = true
-
-        } else if (this.cursors.right.isDown) {
-            this.sprite.setVelocityX(speed)
-
-            this.sprite.flipX = false
-        }
-    }
 
     
 
@@ -232,16 +232,5 @@ export default class PlayerController{
             repeat: -1
         })
 
-        this.sprite.anims.create({
-            key: 'player-hurt',
-            frameRate: 10,
-            frames: this.sprite.anims.generateFrameNames('coal-guy', {
-                start: 20,
-                end: 21,
-                prefix: 'coal_guy_hurt-',
-                suffix: '.svg'
-            }),
-            repeat: -1
-        })
     }
 }

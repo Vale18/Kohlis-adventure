@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="14">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="13">
  <editorsettings>
   <export target="assets/game2.json" format="json"/>
  </editorsettings>
@@ -244,16 +244,16 @@
  </layer>
  <objectgroup id="2" name="objects">
   <object id="1" name="penguin-spawn" x="1058.75" y="1814.33" width="68.75" height="69.0833"/>
-  <object id="4" name="info" x="771" y="1818.33" width="207.333" height="70.3333">
+  <object id="4" name="info" x="771" y="1795.33" width="207.333" height="121.333">
    <properties>
     <property name="InfoID" type="int" value="0"/>
    </properties>
   </object>
   <object id="5" name="diamond" x="1821.5" y="1750.5" width="68" height="69.5"/>
   <object id="6" name="diamond" x="1962.5" y="1749.75" width="68" height="69.5"/>
-  <object id="7" name="info2" x="423" y="1820.83" width="207.333" height="70.3333"/>
-  <object id="8" name="hitbox" x="1255.33" y="1847.83" width="62.5" height="41.1667"/>
+  <object id="7" name="info2" x="423" y="1788.83" width="207.333" height="131.333"/>
+  <object id="8" name="hitbox" x="1337" y="1823.5" width="62.5" height="15.5"/>
   <object id="11" name="hitbox" x="1472.25" y="1823.75" width="62.5" height="15.5"/>
-  <object id="13" name="hitbox" x="1338.42" y="1822.92" width="62.5" height="15.5"/>
+  <object id="12" name="hitbox" x="1252.33" y="1851" width="70" height="39"/>
  </objectgroup>
 </map>
