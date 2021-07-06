@@ -10,6 +10,7 @@ export default class MienenguyController{
 
     private moveTime = 0
 
+
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite){
         this.scene = scene
         this.sprite = sprite
@@ -41,12 +42,10 @@ export default class MienenguyController{
     }
 
     private killMienenguy(mienenguy: Phaser.Physics.Matter.Sprite){
-        console.log("kill")
         if(this.sprite !== mienenguy){
             return
         }
         events.off('kill-mienenguy', this.killMienenguy, this)
-
         this.scene.tweens.add({
             targets: this.sprite,
             displayHeight: 0,
@@ -58,9 +57,9 @@ export default class MienenguyController{
                 this.sprite.destroy()
             }
         })
-
         this.stateMachine.setState('dead')
     }
+
 
     private idleOnEnter(){
         this.sprite.play('idle')
