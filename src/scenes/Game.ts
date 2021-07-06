@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import PlayerController from './PlayerController'
 import ObsticalesController from './ObsticalesController'
+import MienenguyController from './MienenguyController'
 
 export default class Game extends Phaser.Scene {
 
@@ -9,6 +10,7 @@ export default class Game extends Phaser.Scene {
     private player?: Phaser.Physics.Matter.Sprite
     private playerController?: PlayerController
     private obstacles!: ObsticalesController
+    private mienenguy: MienenguyController[] = []
 
     private isTouchingGround = false
 
@@ -19,10 +21,16 @@ export default class Game extends Phaser.Scene {
     init() {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.obstacles = new ObsticalesController()
+        this.mienenguy = []
+
+        this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
+            this.destroy()
+        })
     }
 
     preload() {
         this.load.atlas('coal-guy', 'assets/coal_guy2.png', 'assets/coal_guy2.json')
+        this.load.atlas('mienenguy', 'assets/mienenguy.png', 'assets/mienenguy.json')
         this.load.image('tiles', 'assets/tiles-12.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
         this.load.image('diamond', 'assets/diamond.png')
@@ -55,6 +63,15 @@ export default class Game extends Phaser.Scene {
                     this.cameras.main.startFollow(this.player)
 
                     
+                    break
+                }
+                case 'mienenguy-spawn':{
+                    const mienenguy = this.matter.add.sprite(x,y, 'mienenguy')
+                        .setScale(1.2)
+                        .setFixedRotation()
+                    this.mienenguy.push(new MienenguyController(this, mienenguy))
+                    this.obstacles.add('mienenguy', mienenguy.body as MatterJS.BodyType)
+                   
                     break
                 }
                 case 'diamond':{
@@ -111,13 +128,14 @@ export default class Game extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(ground)
     }
 
+    private destroy(){
+       this.mienenguy.forEach(mienenguy => mienenguy.destroy()) 
+    }
+
     update(t: number, dt: number) {
-
-        if(!this.playerController){
-            return
-        }
-
-        this.playerController.update(dt)
+        this.playerController?.update(dt)
+            
+        this.mienenguy.forEach(mienenguy => mienenguy.update(dt))
 
     }
 }

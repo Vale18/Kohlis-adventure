@@ -72,7 +72,6 @@ export default class UI extends Phaser.Scene{
             duration: 200,
             onUpdate: tween => {
                 const value = tween.getValue()
-                console.log(value)
                 this.setHealthBar(value)
             }
         })
@@ -82,14 +81,14 @@ export default class UI extends Phaser.Scene{
 
 
     private readInfo(){
-        this.infoText = "Mit den Pfeiltasten kannst du dich Bewegen"
+        this.infoText = "Mit den Pfeiltasten kannst du dich bewegen"
         if(this.show == true ){
             this.info.destroy()
         }
         this.info = this.add.text(50,100, this.infoText,{
             fontSize: '15px'
         })
-        this.timerEvent = this.time.delayedCall(10000, this.destroyText, [], this)
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
         this.show = true
         
     }
@@ -102,7 +101,7 @@ export default class UI extends Phaser.Scene{
         this.info = this.add.text(50,100, this.infoText,{
             fontSize: '15px'
         })
-        this.timerEvent = this.time.delayedCall(10000, this.destroyText, [], this)
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
         this.show = true
 
     }

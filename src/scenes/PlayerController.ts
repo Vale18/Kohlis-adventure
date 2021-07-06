@@ -13,6 +13,7 @@ export default class PlayerController{
     private stateMachine: StateMachine
     private obsticales : ObsticalesController
     private health = 100
+    private lastMienenguy?: Phaser.Physics.Matter.Sprite
 
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
@@ -44,6 +45,12 @@ export default class PlayerController{
             // onUpdate: this.hitboxhitOnUpdate,
             // onExit: this.hitboxhitOnExit
         })
+        .addState('mienenguy-hit', {
+            onEnter: this.mienenguyHitOnEnter
+        })
+        .addState('jumpOnMienenguy', {
+            onEnter: this.jumpOnMienenguyOnEnter
+        })
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
@@ -51,16 +58,28 @@ export default class PlayerController{
 
             if(this.obsticales.is('hitboxs', body)){
                 this.stateMachine.setState('hitbox-hit')
-                
+                return
+            }
+
+            if(this.obsticales.is('mienenguy', body)){
+                this.lastMienenguy = body.gameObject
+                if(this.sprite.y < body.position.y){
+                    this.stateMachine.setState('jumpOnMienenguy')
+                }else{
+                    this.stateMachine.setState('mienenguy-hit')
+                }
+                return
             }
 
             if(this.obsticales.is('info', body)){
                 events.emit('info')
+                return
             }
 
 
             if(this.obsticales.is('info2', body)){
                 events.emit('info2')
+                return
             }
 
             const gameObject = body.gameObject
@@ -120,9 +139,6 @@ export default class PlayerController{
         }
     }
 
-    // private idleOnExit(){
-    //     console.log("Exit")
-    // }
 
     private walkOnEnter(){
         this.sprite.play('player-walk')
@@ -177,6 +193,14 @@ export default class PlayerController{
         this.stateMachine.setState("walk")
     }
 
+    private jumpOnMienenguyOnEnter(){
+        this.sprite.setVelocityY(-10)
+
+        events.emit('kill-mienenguy', this.lastMienenguy)
+
+        this.stateMachine.setState('jump')
+    }
+
     private hitboxhitOnEnter(){
         this.sprite.setVelocityY(-12)
         this.health = Phaser.Math.Clamp(this.health - 10, 0,100)
@@ -206,7 +230,54 @@ export default class PlayerController{
                 this.sprite.setTint(color)
             }
         })
+
         this.stateMachine.setState('jump')
+    }
+
+    private mienenguyHitOnEnter(){
+        if (this.lastMienenguy){   
+			if (this.sprite.x < this.lastMienenguy.x){
+				this.sprite.setVelocityX(-20)
+			}
+			else{
+				this.sprite.setVelocityX(20)
+			}
+		}
+		else{
+			this.sprite.setVelocityY(-20)
+		}
+        const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
+		const endColor = Phaser.Display.Color.ValueToColor(0x0000ff)
+
+		this.scene.tweens.addCounter({
+			from: 0,
+			to: 100,
+			duration: 100,
+			repeat: 2,
+			yoyo: true,
+			ease: Phaser.Math.Easing.Sine.InOut,
+			onUpdate: tween => {
+				const value = tween.getValue()
+				const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+					startColor,
+					endColor,
+					100,
+					value
+				)
+
+				const color = Phaser.Display.Color.GetColor(
+					colorObject.r,
+					colorObject.g,
+					colorObject.b
+				)
+
+				this.sprite.setTint(color)
+			}
+		})
+        this.stateMachine.setState('jump')
+
+        this.health = Phaser.Math.Clamp(this.health - 25, 0,100)
+        events.emit('health-changed', this.health)
     }
 
 
