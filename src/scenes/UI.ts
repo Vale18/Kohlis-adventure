@@ -23,7 +23,7 @@ export default class UI extends Phaser.Scene{
     }
 
     preload(){
-        this.load.image('diamond', 'assets/diamond.png')
+        this.load.image('diamond', 'assets/diamond2.png')
     }
 
     create(){
@@ -33,7 +33,7 @@ export default class UI extends Phaser.Scene{
 
 
         const uiDiamond = this.add.image(20,50, 'diamond')
-        .setScale(0.3)
+        .setScale(1)
         this.diamondLabe = this.add.text(35,35, '0',{
             fontSize: '32px'
         })

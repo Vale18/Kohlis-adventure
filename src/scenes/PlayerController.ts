@@ -71,6 +71,10 @@ export default class PlayerController{
                 return
             }
 
+            if(this.obsticales.is('miniMienenguy', body)){
+                console.log("kleinermann")
+            }
+
             if(this.obsticales.is('info', body)){
                 events.emit('info')
                 return

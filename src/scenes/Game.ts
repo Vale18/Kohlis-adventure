@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import PlayerController from './PlayerController'
 import ObsticalesController from './ObsticalesController'
 import MienenguyController from './MienenguyController'
+import MiniMienenguyController from './MiniMienenguyController'
 
 export default class Game extends Phaser.Scene {
 
@@ -11,6 +12,7 @@ export default class Game extends Phaser.Scene {
     private playerController?: PlayerController
     private obstacles!: ObsticalesController
     private mienenguy: MienenguyController[] = []
+    private miniMienenguy: MiniMienenguyController[] = []
 
     private isTouchingGround = false
 
@@ -22,6 +24,7 @@ export default class Game extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.obstacles = new ObsticalesController()
         this.mienenguy = []
+        this.miniMienenguy = []
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
             this.destroy()
@@ -31,10 +34,12 @@ export default class Game extends Phaser.Scene {
     preload() {
         this.load.atlas('coal-guy', 'assets/coal_guy2.png', 'assets/coal_guy2.json')
         this.load.atlas('mienenguy', 'assets/mienenguy.png', 'assets/mienenguy.json')
-        this.load.image('tiles', 'assets/tiles-12.png')
+        this.load.atlas('miniMienenguy', 'assets/miniMienenguy.png', 'assets/miniMienenguy.json')
+        this.load.image('tiles', 'assets/tiles.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
-        this.load.image('diamond', 'assets/diamond.png')
-        this.load.image('health', 'assets/healing.png')
+        this.load.image('diamond', 'assets/diamond2.png')
+        this.load.image('health', 'assets/heart.png')
+        
     }
 
     create() {
@@ -42,11 +47,13 @@ export default class Game extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'tilemap' })
         const tileset = map.addTilesetImage('Miene', 'tiles')
     
-
+        const background = map.createLayer('background', tileset)
         const ground = map.createLayer('ground', tileset)
         ground.setCollisionByProperty({ collides: true })
         
         const overlay = map.createLayer('overlay', tileset)
+
+       
 
         const objectsLayer = map.getObjectLayer('objects')
         objectsLayer.objects.forEach(objData => {
@@ -65,21 +72,31 @@ export default class Game extends Phaser.Scene {
                     
                     break
                 }
+                
+                case 'miniMienenguy-spawn':{
+                    const miniMienenguy = this.matter.add.sprite(x,y, 'miniMienenguy')
+                        .setFixedRotation
+                    this.obstacles.add('miniMienenguy', miniMienenguy.body as MatterJS.BodyType)
+                    this.miniMienenguy.push(new MiniMienenguyController(this, miniMienenguy))
+                    break
+                }
                 case 'mienenguy-spawn':{
                     const mienenguy = this.matter.add.sprite(x,y, 'mienenguy')
                         .setScale(1.2)
                         .setFixedRotation()
-                    this.mienenguy.push(new MienenguyController(this, mienenguy, 1))
+                    this.mienenguy.push(new MienenguyController(this, mienenguy))
                     this.obstacles.add('mienenguy', mienenguy.body as MatterJS.BodyType)
-                   
                     break
                 }
+
+                
+
                 case 'diamond':{
                     const diamont = this.matter.add.sprite(x+(width*0.5),y,'diamond', undefined ,{
                         isStatic: true,
                         isSensor: true
                     })
-                    diamont.setScale(0.3)
+                    diamont.setScale(1)
                     diamont.setData('type', 'diamond')
 
                     break
@@ -89,7 +106,7 @@ export default class Game extends Phaser.Scene {
                         isStatic: true,
                         isSensor: true
                     })
-                    health.setScale(0.3)
+                    health.setScale(1)
                     health.setData('type', 'health') 
                     health.setData('healthPoints', 10)
                     break
@@ -129,13 +146,16 @@ export default class Game extends Phaser.Scene {
     }
 
     private destroy(){
-       this.mienenguy.forEach(mienenguy => mienenguy.destroy()) 
+       this.mienenguy.forEach(mienenguy => mienenguy.destroy())
+       this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy()) 
     }
 
     update(t: number, dt: number) {
         this.playerController?.update(dt)
             
         this.mienenguy.forEach(mienenguy => mienenguy.update(dt))
+
+        this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.update(dt))
 
     }
 }
