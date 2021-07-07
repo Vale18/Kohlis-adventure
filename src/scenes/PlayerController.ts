@@ -14,6 +14,7 @@ export default class PlayerController{
     private obsticales : ObsticalesController
     private health = 100
     private lastMienenguy?: Phaser.Physics.Matter.Sprite
+    private lastMiniguy?: Phaser.Physics.Matter.Sprite
 
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
@@ -51,6 +52,9 @@ export default class PlayerController{
         .addState('jumpOnMienenguy', {
             onEnter: this.jumpOnMienenguyOnEnter
         })
+        .addState('miniguy-hit',{
+            onEnter: this.miniguyHitOnEnter
+        })
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
@@ -72,6 +76,8 @@ export default class PlayerController{
             }
 
             if(this.obsticales.is('miniMienenguy', body)){
+                this.lastMiniguy = body.gameObject
+                this.stateMachine.setState('miniguy-hit')
                 console.log("kleinermann")
             }
 
@@ -207,7 +213,7 @@ export default class PlayerController{
 
     private hitboxhitOnEnter(){
         this.sprite.setVelocityY(-12)
-        this.health = Phaser.Math.Clamp(this.health - 10, 0,100)
+        this.health = Phaser.Math.Clamp(this.health - 20, 0,100)
         events.emit('health-changed', this.health)
         const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
         const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
@@ -282,6 +288,22 @@ export default class PlayerController{
 
         this.health = Phaser.Math.Clamp(this.health - 25, 0,100)
         events.emit('health-changed', this.health)
+    }
+
+    private miniguyHitOnEnter(){
+        if (this.lastMienenguy){   
+			if (this.sprite.x < this.lastMienenguy.x){
+				this.sprite.setVelocityX(-20)
+			}
+			else{
+				this.sprite.setVelocityX(20)
+			}
+		}
+		else{
+			this.sprite.setVelocityY(-20)
+		}
+
+        this.stateMachine.setState('jump')
     }
 
 

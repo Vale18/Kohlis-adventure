@@ -75,7 +75,7 @@ export default class Game extends Phaser.Scene {
                 
                 case 'miniMienenguy-spawn':{
                     const miniMienenguy = this.matter.add.sprite(x,y, 'miniMienenguy')
-                        .setFixedRotation
+                        .setFixedRotation()
                     this.obstacles.add('miniMienenguy', miniMienenguy.body as MatterJS.BodyType)
                     this.miniMienenguy.push(new MiniMienenguyController(this, miniMienenguy))
                     break
@@ -147,15 +147,16 @@ export default class Game extends Phaser.Scene {
 
     private destroy(){
        this.mienenguy.forEach(mienenguy => mienenguy.destroy())
-       this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy()) 
+       this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy())
     }
 
     update(t: number, dt: number) {
         this.playerController?.update(dt)
             
         this.mienenguy.forEach(mienenguy => mienenguy.update(dt))
-
         this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.update(dt))
+
+        
 
     }
 }
