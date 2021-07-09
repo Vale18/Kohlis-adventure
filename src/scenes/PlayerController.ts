@@ -7,12 +7,17 @@ type CursorKeys = Phaser.Types.Input.Keyboard.CursorKeys
 
 export default class PlayerController{
 
+    private scene: Phaser.Scene
     private sprite: Phaser.Physics.Matter.Sprite
     private cursors: CursorKeys
     private stateMachine: StateMachine
     private obsticales : ObsticalesController
+    private health = 100
+    private lastMienenguy?: Phaser.Physics.Matter.Sprite
+    private lastMiniguy?: Phaser.Physics.Matter.Sprite
 
-    constructor(sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
+        this.scene = scene
         this.sprite = sprite
         this.cursors = cursors
         this.obsticales = obsticales
@@ -20,6 +25,7 @@ export default class PlayerController{
         this.createAnimations()
 
         this.stateMachine = new StateMachine(this, 'player')
+
 
         this.stateMachine.addState('idle',{
             onEnter: this.idleOnEnter,
@@ -35,13 +41,19 @@ export default class PlayerController{
             onEnter: this.jumpOnEnter,
             onUpdate: this.jumpOnUpdate
         })
-        .addState('readInfo', {
-            onEnter: this.readOnEnter,
-        })
         .addState('hitbox-hit', {
             onEnter: this.hitboxhitOnEnter,
-            onUpdate: this.hitboxhitOnUpdate,
+            // onUpdate: this.hitboxhitOnUpdate,
             // onExit: this.hitboxhitOnExit
+        })
+        .addState('mienenguy-hit', {
+            onEnter: this.mienenguyHitOnEnter
+        })
+        .addState('jumpOnMienenguy', {
+            onEnter: this.jumpOnMienenguyOnEnter
+        })
+        .addState('miniguy-hit',{
+            onEnter: this.miniguyHitOnEnter
         })
         .setState('idle')
 
@@ -53,9 +65,31 @@ export default class PlayerController{
                 return
             }
 
+            if(this.obsticales.is('mienenguy', body)){
+                this.lastMienenguy = body.gameObject
+                if(this.sprite.y < body.position.y){
+                    this.stateMachine.setState('jumpOnMienenguy')
+                }else{
+                    this.stateMachine.setState('mienenguy-hit')
+                }
+                return
+            }
+
+            if(this.obsticales.is('miniMienenguy', body)){
+                this.lastMiniguy = body.gameObject
+                this.stateMachine.setState('miniguy-hit')
+                console.log("kleinermann")
+            }
+
             if(this.obsticales.is('info', body)){
                 events.emit('info')
-                this.stateMachine.setState('readInfo')
+                return
+            }
+
+
+            if(this.obsticales.is('info2', body)){
+                events.emit('info2')
+                return
             }
 
             const gameObject = body.gameObject
@@ -70,8 +104,6 @@ export default class PlayerController{
                     this.stateMachine.setState('idle')
                 }
                 if(this.stateMachine.isCurrentState('hitbox-hit')){
-                    
-                    console.log('now idle')
                     this.stateMachine.setState('idle')
                 }
                 return
@@ -87,16 +119,11 @@ export default class PlayerController{
                     sprite.destroy()
                     break
                 }
-                case 'info':{
-                    this.stateMachine.setState('readInfo')
-                    console.log("Schild 1")
-                    events.emit('info')
-                    break
-                }
-                case 'info2':{
-                    this.stateMachine.setState('readInfo')
-                    events.emit('info2')
-                    console.log("Schild 2")
+                case 'health':{
+                    const value = sprite.getData('healthPoints') 
+                    this.health += Phaser.Math.Clamp(value, 0, 100)
+                    events.emit('health-changed', this.health)
+                    sprite.destroy()
                     break
                 }
             }
@@ -122,9 +149,6 @@ export default class PlayerController{
         }
     }
 
-    // private idleOnExit(){
-    //     console.log("Exit")
-    // }
 
     private walkOnEnter(){
         this.sprite.play('player-walk')
@@ -176,28 +200,112 @@ export default class PlayerController{
 
     private readOnEnter(){
         console.log("readInfo")
-        
         this.stateMachine.setState("walk")
+    }
+
+    private jumpOnMienenguyOnEnter(){
+        this.sprite.setVelocityY(-10)
+
+        events.emit('kill-mienenguy', this.lastMienenguy)
+
+        this.stateMachine.setState('jump')
     }
 
     private hitboxhitOnEnter(){
         this.sprite.setVelocityY(-12)
-        this.sprite.play('player-hurt')
-        // this.stateMachine.setState('jump')
+        this.health = Phaser.Math.Clamp(this.health - 20, 0,100)
+        events.emit('health-changed', this.health)
+        const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
+        const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: 100,
+            duration: 100,
+            repeat: 2,
+            yoyo: true,
+            ease: Phaser.Math.Easing.Sine.InOut,
+            onUpdate: tween => {
+                const value = tween.getValue()
+                const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+                    startColor,
+                    endColor,
+                    100,
+                    value
+                )
+                const color = Phaser.Display.Color.GetColor(
+                    colorObject.r,
+                    colorObject.g,
+                    colorObject.b
+                )
+                this.sprite.setTint(color)
+            }
+        })
+
+        this.stateMachine.setState('jump')
     }
 
-    private hitboxhitOnUpdate(){
-        const speed = 8
-        if (this.cursors.left.isDown) {
-            this.sprite.setVelocityX(-speed)
-            this.sprite.flipX = true
+    private mienenguyHitOnEnter(){
+        if (this.lastMienenguy){   
+			if (this.sprite.x < this.lastMienenguy.x){
+				this.sprite.setVelocityX(-20)
+			}
+			else{
+				this.sprite.setVelocityX(20)
+			}
+		}
+		else{
+			this.sprite.setVelocityY(-20)
+		}
+        const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
+		const endColor = Phaser.Display.Color.ValueToColor(0x0000ff)
 
-        } else if (this.cursors.right.isDown) {
-            this.sprite.setVelocityX(speed)
+		this.scene.tweens.addCounter({
+			from: 0,
+			to: 100,
+			duration: 100,
+			repeat: 2,
+			yoyo: true,
+			ease: Phaser.Math.Easing.Sine.InOut,
+			onUpdate: tween => {
+				const value = tween.getValue()
+				const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+					startColor,
+					endColor,
+					100,
+					value
+				)
 
-            this.sprite.flipX = false
-        }
+				const color = Phaser.Display.Color.GetColor(
+					colorObject.r,
+					colorObject.g,
+					colorObject.b
+				)
+
+				this.sprite.setTint(color)
+			}
+		})
+        this.stateMachine.setState('jump')
+
+        this.health = Phaser.Math.Clamp(this.health - 25, 0,100)
+        events.emit('health-changed', this.health)
     }
+
+    private miniguyHitOnEnter(){
+        if (this.lastMienenguy){   
+			if (this.sprite.x < this.lastMienenguy.x){
+				this.sprite.setVelocityX(-20)
+			}
+			else{
+				this.sprite.setVelocityX(20)
+			}
+		}
+		else{
+			this.sprite.setVelocityY(-20)
+		}
+
+        this.stateMachine.setState('jump')
+    }
+
 
     
 
@@ -232,16 +340,5 @@ export default class PlayerController{
             repeat: -1
         })
 
-        this.sprite.anims.create({
-            key: 'player-hurt',
-            frameRate: 10,
-            frames: this.sprite.anims.generateFrameNames('coal-guy', {
-                start: 20,
-                end: 21,
-                prefix: 'coal_guy_hurt-',
-                suffix: '.svg'
-            }),
-            repeat: -1
-        })
     }
 }
