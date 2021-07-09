@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import StateMachine from '../statemachine/StateMachine'
+import EmptyLorenController from './EmptyLorenController'
 import { events } from './EventCenter'
 import ObsticalesController from './ObsticalesController'
 
@@ -15,6 +16,7 @@ export default class PlayerController{
     private health = 100
     private lastMienenguy?: Phaser.Physics.Matter.Sprite
     private lastMiniguy?: Phaser.Physics.Matter.Sprite
+    private lastEmptyLore?: Phaser.Physics.Matter.Sprite
 
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
@@ -46,6 +48,9 @@ export default class PlayerController{
             // onUpdate: this.hitboxhitOnUpdate,
             // onExit: this.hitboxhitOnExit
         })
+        .addState('killZone',{
+            onEnter: this.killZoneOnEnter
+        })
         .addState('mienenguy-hit', {
             onEnter: this.mienenguyHitOnEnter
         })
@@ -54,6 +59,10 @@ export default class PlayerController{
         })
         .addState('miniguy-hit',{
             onEnter: this.miniguyHitOnEnter
+        })
+        .addState('loren-drive', {
+            onEnter: this.lorenDriveOnEnter,
+            onUpdate: this.lorenDirveOnUpdate
         })
         .setState('idle')
 
@@ -64,6 +73,9 @@ export default class PlayerController{
                 this.stateMachine.setState('hitbox-hit')
                 return
             }
+            if(this.obsticales.is('deadZones', body)){
+                    this.stateMachine.setState('killZone')
+                }
 
             if(this.obsticales.is('mienenguy', body)){
                 this.lastMienenguy = body.gameObject
@@ -79,6 +91,11 @@ export default class PlayerController{
                 this.lastMiniguy = body.gameObject
                 this.stateMachine.setState('miniguy-hit')
                 console.log("kleinermann")
+            }
+
+            if(this.obsticales.is('emptyLore', body)){
+                this.lastEmptyLore = body.gameObject
+                this.stateMachine.setState('loren-drive')
             }
 
             if(this.obsticales.is('info', body)){
@@ -198,11 +215,7 @@ export default class PlayerController{
         }
     }
 
-    private readOnEnter(){
-        console.log("readInfo")
-        this.stateMachine.setState("walk")
-    }
-
+    
     private jumpOnMienenguyOnEnter(){
         this.sprite.setVelocityY(-10)
 
@@ -242,6 +255,43 @@ export default class PlayerController{
         })
 
         this.stateMachine.setState('jump')
+    }
+
+    private killZoneOnEnter(){
+        this.sprite.setVelocityY(-20)
+        this.sprite.setVelocityX(0)
+        this.health = Phaser.Math.Clamp(this.health - 500, 0,100)
+        events.emit('health-changed', this.health)
+        const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
+        const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: 100,
+            duration: 100,
+            repeat: 10,
+            yoyo: true,
+            ease: Phaser.Math.Easing.Sine.InOut,
+            onUpdate: tween => {
+                const value = tween.getValue()
+                const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+                    startColor,
+                    endColor,
+                    100,
+                    value
+                )
+                const color = Phaser.Display.Color.GetColor(
+                    colorObject.r,
+                    colorObject.g,
+                    colorObject.b
+                )
+                this.sprite.setTint(color)
+            }
+        })
+        
+        // this.sprite.setRotation(-1.5)
+        
+        //TODO: LoseScreen Anzeigen.
+        this.stateMachine.setState('idle')
     }
 
     private mienenguyHitOnEnter(){
@@ -291,12 +341,12 @@ export default class PlayerController{
     }
 
     private miniguyHitOnEnter(){
-        if (this.lastMienenguy){   
-			if (this.sprite.x < this.lastMienenguy.x){
-				this.sprite.setVelocityX(-20)
+        if (this.lastMiniguy){   
+			if (this.sprite.x < this.lastMiniguy.x){
+				this.sprite.setVelocityX(-15)
 			}
 			else{
-				this.sprite.setVelocityX(20)
+				this.sprite.setVelocityX(15)
 			}
 		}
 		else{
@@ -304,6 +354,26 @@ export default class PlayerController{
 		}
 
         this.stateMachine.setState('jump')
+    }
+
+    private lorenDriveOnEnter(){
+        if(this.lastEmptyLore){
+            const lorencontroller = new EmptyLorenController(this.scene, this.lastEmptyLore, this.obsticales)
+            console.log(this.lastEmptyLore.body.velocity)
+            
+        }
+    }
+
+    private lorenDirveOnUpdate(){
+        if(this.lastEmptyLore){
+        // this.sprite.setVelocity(this.lastEmptyLore.body.velocity, this.lastEmptyLore.body.velocity) 
+        }
+    
+        if(this.cursors.space.isDown){
+            this.sprite.setVelocityY(-8)
+            this.stateMachine.setState('jump')
+        }
+        
     }
 
 
