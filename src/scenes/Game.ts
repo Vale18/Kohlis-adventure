@@ -3,6 +3,7 @@ import PlayerController from './PlayerController'
 import ObsticalesController from './ObsticalesController'
 import MienenguyController from './MienenguyController'
 import MiniMienenguyController from './MiniMienenguyController'
+import EmptyLorenController from './EmptyLorenController'
 
 export default class Game extends Phaser.Scene {
 
@@ -13,6 +14,7 @@ export default class Game extends Phaser.Scene {
     private obstacles!: ObsticalesController
     private mienenguy: MienenguyController[] = []
     private miniMienenguy: MiniMienenguyController[] = []
+    private emptyLore: EmptyLorenController[] = []
 
     private isTouchingGround = false
 
@@ -25,6 +27,7 @@ export default class Game extends Phaser.Scene {
         this.obstacles = new ObsticalesController()
         this.mienenguy = []
         this.miniMienenguy = []
+        this.emptyLore = []
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
             this.destroy()
@@ -39,6 +42,7 @@ export default class Game extends Phaser.Scene {
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
         this.load.image('diamond', 'assets/diamond2.png')
         this.load.image('health', 'assets/heart.png')
+        this.load.image('emptyLore', 'assets/emptylore.png')
         
     }
 
@@ -88,6 +92,13 @@ export default class Game extends Phaser.Scene {
                     this.obstacles.add('mienenguy', mienenguy.body as MatterJS.BodyType)
                     break
                 }
+                case 'mienencart-spawn':{
+                    const emptyLore = this.matter.add.sprite(x,y, 'emptyLore')
+                        .setFixedRotation()
+                    this.emptyLore.push(new EmptyLorenController(this, emptyLore, this.obstacles))
+                    this.obstacles.add('emptyLore', emptyLore.body as MatterJS.BodyType)
+                    break
+                }
 
                 
 
@@ -116,6 +127,29 @@ export default class Game extends Phaser.Scene {
                         isStatic: true,
                     } )
                     this.obstacles.add('hitboxs', hitbox)
+                    break
+                }
+                case 'rightWall': {
+                    const rightWall = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    this.obstacles.add('rightWall', rightWall)
+                    break
+                }
+                case 'leftWall': {
+                    const leftWall = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    this.obstacles.add('leftWall', leftWall)
+                    break
+                }
+                case 'deadZone':{
+                    const deadZone = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                    })
+                    this.obstacles.add('deadZones', deadZone)
                     break
                 }
                 case 'info':{
@@ -148,6 +182,7 @@ export default class Game extends Phaser.Scene {
     private destroy(){
        this.mienenguy.forEach(mienenguy => mienenguy.destroy())
        this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy())
+       this.emptyLore.forEach(emptyLore => emptyLore.destroy())
     }
 
     update(t: number, dt: number) {
@@ -155,6 +190,7 @@ export default class Game extends Phaser.Scene {
             
         this.mienenguy.forEach(mienenguy => mienenguy.update(dt))
         this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.update(dt))
+        this.emptyLore.forEach(emptyLore => emptyLore.update(dt))
 
         
 
