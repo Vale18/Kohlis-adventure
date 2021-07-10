@@ -65,7 +65,7 @@ export default class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset)
         ground.setCollisionByProperty({ collides: true })
         
-        const overlay = map.createLayer('overlay', tileset)
+        
 
        
 
@@ -104,16 +104,6 @@ export default class Game extends Phaser.Scene {
                     break
                 }
 
-                case 'destroyBox-spawn':{
-                    const destroyBox=this.matter.add.sprite(x+(width*0.5),y+(height*0.5), 'destroyBox', undefined, {
-                        isStatic: true
-                    })
-                    this.destroyBox.push(new DestroyBoxController(destroyBox))
-                    this.obstacles.add('destroyBox', destroyBox.body as MatterJS.BodyType)
-                    break
-                }
-                
-
                 case 'diamond':{
                     const diamont = this.matter.add.sprite(x+(width*0.5),y+(height*0.5),'diamond', undefined ,{
                         isStatic: true,
@@ -124,6 +114,16 @@ export default class Game extends Phaser.Scene {
 
                     break
                 }
+
+                case 'destroyBox-spawn':{
+                    const destroyBox=this.matter.add.sprite(x+(width*0.5),y+(height*0.5), 'destroyBox', undefined, {
+                        isStatic: true
+                    })
+                    this.destroyBox.push(new DestroyBoxController(destroyBox))
+                    this.obstacles.add('destroyBox', destroyBox.body as MatterJS.BodyType)
+                    break
+                }
+
                 case 'health':{
                     const health = this.matter.add.sprite(x+(width*0.5),y, 'health', undefined ,{
                         isStatic: true,
@@ -237,7 +237,7 @@ export default class Game extends Phaser.Scene {
         })
 
         
-
+        const overlay = map.createLayer('overlay', tileset)
         this.matter.world.convertTilemapLayer(ground)
         
         

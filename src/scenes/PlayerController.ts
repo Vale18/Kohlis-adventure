@@ -49,6 +49,10 @@ export default class PlayerController{
             onEnter: this.jumpOnEnter,
             onUpdate: this.jumpOnUpdate
         })
+        .addState('super-jump',{
+            onEnter: this.superJumpOnEnter,
+            onUpdate: this.superJumpOnUpdate
+        })
         .addState('hitbox-hit', {
             onEnter: this.hitboxhitOnEnter,
             // onUpdate: this.hitboxhitOnUpdate,
@@ -101,7 +105,6 @@ export default class PlayerController{
             if(this.obsticales.is('miniMienenguy', body)){
                 this.lastMiniguy = body.gameObject
                 this.stateMachine.setState('miniguy-hit')
-                console.log("kleinermann")
             }
 
             if(this.obsticales.is('emptyLore', body)){
@@ -241,6 +244,15 @@ export default class PlayerController{
         }
     }
 
+    private superJumpOnEnter(){
+        this.sprite.setVelocityY(-20)
+    }
+    private superJumpOnUpdate(){
+        this.sprite.setVelocityY(-20)
+        this.stateMachine.setState('idle')
+    }
+
+
     
     private jumpOnMienenguyOnEnter(){
         this.sprite.setVelocityY(-10)
@@ -368,18 +380,26 @@ export default class PlayerController{
 
     private miniguyHitOnEnter(){
         if (this.lastMiniguy){   
-			if (this.sprite.x < this.lastMiniguy.x){
+            console.log('miniguy')
+            if(this.cursors.space.isDown){
+                this.sprite.setVelocityY(-20)
+                this.stateMachine.setState('super-jump')
+            }
+			else if (this.sprite.x < this.lastMiniguy.x){
 				this.sprite.setVelocityX(-15)
+                this.stateMachine.setState('jump')
 			}
-			else{
+			else if(this.sprite.x > this.lastMiniguy.x){
 				this.sprite.setVelocityX(15)
+                this.stateMachine.setState('jump')
 			}
+            
 		}
-		else{
+		else {
 			this.sprite.setVelocityY(-20)
 		}
 
-        this.stateMachine.setState('jump')
+        
     }
 
     private lorenDriveOnEnter(){
