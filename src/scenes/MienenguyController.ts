@@ -46,6 +46,7 @@ export default class MienenguyController{
             return
         }
         events.off('kill-mienenguy', this.killMienenguy, this)
+        this.sprite.play('idle')
         this.scene.tweens.add({
             targets: this.sprite,
             displayHeight: 0,

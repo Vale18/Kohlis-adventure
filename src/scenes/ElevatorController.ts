@@ -38,7 +38,7 @@ export default class ElevatorController{
 
             if(this.obsticales.is('elevatorTop', body)){
                 console.log('Top')
-                this.sprite.setVelocity(0,20)
+                this.sprite.destroy()
                 this.stateMachine.setState('move-down')
                 
             }
@@ -67,7 +67,8 @@ export default class ElevatorController{
 
     }
 
-    private moveDownOnUpdate(){
+    public moveDownOnUpdate(){
+        // this.sprite.body.velocity.y + 5
         this.sprite.setVelocityX(20)
         this.sprite.setVelocityX(0)
     }
@@ -76,7 +77,8 @@ export default class ElevatorController{
 
     }
 
-    private moveUpOnUpdate(){
+    public moveUpOnUpdate(){
+        // this.sprite.body.velocity.y - 5
         this.sprite.setVelocityY(-20)
         this.sprite.setVelocityX(0)
     }

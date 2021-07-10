@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import TimerEvent from "phaser"
 import StateMachine from '../statemachine/StateMachine'
 import DestroyBoxController from './DestroyBoxController'
+import ElevatorController from './ElevatorController'
 import EmptyLorenController from './EmptyLorenController'
 import { events } from './EventCenter'
 import ObsticalesController from './ObsticalesController'
@@ -433,7 +434,7 @@ export default class PlayerController{
 
     private destroyTheBox(){
         if(this.lastBox){
-            if(this.lastBox.y < this.sprite.y){
+            if(this.lastBox.y+(this.lastBox.height/2) < this.sprite.y){
                 // events.emit('distroyTheBox', this)
                 const boxdestroyer = new DestroyBoxController(this.lastBox)
                     boxdestroyer.setDestroy()
@@ -462,25 +463,33 @@ export default class PlayerController{
 
     private onElevatorOnUpdate(){
         if(this.lastElevator){
-           this.sprite.setVelocityY(-20)
-           this.lastElevator.setVelocityY(-20)
-           const speed = 8
+            this.sprite.setVelocityY(-10)
+            const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
+            eloCont.moveUpOnUpdate()
+            const speed = 8
             if (this.cursors.left.isDown) {
                 this.sprite.setVelocityX(-speed)
                 this.sprite.play('player-walk')
                 this.sprite.flipX = true
                 this.stateMachine.setState('walk')
+                const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
+                eloCont.moveDownOnUpdate() 
+                // this.lastElevator.setVelocityY(15)
 
             } else if (this.cursors.right.isDown) {
                 this.sprite.setVelocityX(speed)
                 this.sprite.play('player-walk')
                 this.sprite.flipX = false
                 this.stateMachine.setState('walk')
+                const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
+                eloCont.moveDownOnUpdate() 
+                // this.lastElevator.setVelocityY(15)
             }else{
                 this.sprite.setVelocity(this.lastElevator.body.velocity.x,this.lastElevator.body.velocity.y )
                 this.sprite.play('player-idle')
             }
             if(this.cursors.space.isDown){
+                this.lastElevator.setVelocityY(15)
                 this.stateMachine.setState('jump')
                 
             }
