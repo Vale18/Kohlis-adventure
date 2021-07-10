@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { events } from '../scenes/EventCenter'
 import PlayerController from './PlayerController'
 import ObsticalesController from './ObsticalesController'
 import MienenguyController from './MienenguyController'
@@ -19,7 +20,7 @@ export default class Game extends Phaser.Scene {
     private emptyLore: EmptyLorenController[] = []
     private destroyBox: DestroyBoxController[] = []
     private elevator: ElevatorController[] = []
-
+    private mienenBlock
     private isTouchingGround = false
 
     constructor() {
@@ -183,7 +184,7 @@ export default class Game extends Phaser.Scene {
                     break
                 }
                 case 'mienencart-spawn':{
-                    const emptyLore = this.matter.add.sprite(x,y, 'emptyLore')
+                    const emptyLore = this.matter.add.sprite(x+(width*0.5), y+(height*0.5), 'emptyLore')
                         .setFixedRotation()
                     this.obstacles.add('emptyLore', emptyLore.body as MatterJS.BodyType)
                     this.emptyLore.push(new EmptyLorenController(this, emptyLore, this.obstacles))
@@ -196,6 +197,23 @@ export default class Game extends Phaser.Scene {
                     this.obstacles.add('deadZones', deadZone)
                     break
                 }
+
+                // case 'mienenBlock':{
+                //     this.mienenBlock = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                //         isStatic: true,
+                //     })
+                //     this.obstacles.add('mienenBlock', this.mienenBlock)
+                //     break
+                // }
+                case 'mienenBlockTrigger':{
+                    const mienenBlockTrigger = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    this.obstacles.add('mienenBlockTrigger', mienenBlockTrigger)
+                    break
+                }
+
                 case 'info':{
                     const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width,height,{
                         isStatic: true,
@@ -221,6 +239,8 @@ export default class Game extends Phaser.Scene {
         
 
         this.matter.world.convertTilemapLayer(ground)
+        
+        
     }
 
     private destroy(){
@@ -240,4 +260,5 @@ export default class Game extends Phaser.Scene {
         
 
     }
+    
 }

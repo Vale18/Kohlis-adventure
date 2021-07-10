@@ -30,7 +30,7 @@ export default class EmptyLorenController{
             onEnter: this.moveRightOnEnter,
             onUpdate: this.moveRightOnUpdate
         })
-        .setState('move-left')
+        .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
             const body = data.bodyA as MatterJS.BodyType
@@ -47,9 +47,13 @@ export default class EmptyLorenController{
             }
         })
 
+        events.on('startMienenCart', this.startTheCart, this)
 
     }
 
+    private startTheCart(){
+        this.stateMachine.setState('move-left')
+    }
 
     
 
@@ -86,7 +90,7 @@ export default class EmptyLorenController{
     }
 
     destroy(){
-        
+        events.off('startMienenCart', this.startTheCart, this)
     }
     update(dt: number){
         this.stateMachine.update(dt)

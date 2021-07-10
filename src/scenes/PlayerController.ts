@@ -23,6 +23,7 @@ export default class PlayerController{
     private lastBox?: Phaser.Physics.Matter.Sprite
     private lastElevator?: Phaser.Physics.Matter.Sprite
 
+
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
         this.sprite = sprite
@@ -118,6 +119,11 @@ export default class PlayerController{
                 this.destroyTheBox()
             }
 
+            if(this.obsticales.is('mienenBlockTrigger', body)){
+                console.log('Mienecart looooossss')
+                events.emit('startMienenCart')
+            }
+
             if(this.obsticales.is('info', body)){
                 events.emit('info')
                 return
@@ -201,10 +207,10 @@ export default class PlayerController{
             this.sprite.setVelocityX(speed)
 
             this.sprite.flipX = false
-        } else {
+        } else if(this.cursors.left.isUp) {
             this.sprite.setVelocityX(0)
             this.stateMachine.setState('idle')
-        }
+        } 
 
         const spaceJustPressd = Phaser.Input.Keyboard.JustDown(this.cursors.space)
         if (spaceJustPressd) {
