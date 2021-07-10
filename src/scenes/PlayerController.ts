@@ -92,6 +92,40 @@ export default class PlayerController{
                 return
             }
 
+            if(this.obsticales.is('info3', body)){
+                events.emit('info3')
+                return
+            }
+                        
+            if(this.obsticales.is('info4', body)){
+                events.emit('info4')
+                return
+            }
+                        
+            if(this.obsticales.is('info5', body)){
+                events.emit('info5')
+                return
+            }
+                        
+            if(this.obsticales.is('info6', body)){
+                events.emit('info6')
+                return
+            }
+                        
+            if(this.obsticales.is('info7', body)){
+                events.emit('info7')
+                return
+            }
+                        
+            if(this.obsticales.is('info8', body)){
+                events.emit('info8')
+                return
+            }
+                        
+            if(this.obsticales.is('info9', body)){
+                events.emit('info9')
+                return
+            }
             const gameObject = body.gameObject
 
             if(!gameObject){

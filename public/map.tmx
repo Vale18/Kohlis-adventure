@@ -3,7 +3,7 @@
 <map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-down" width="100" height="30" tilewidth="70" tileheight="70" infinite="0" nextlayerid="4" nextobjectid="14">
 
  <editorsettings>
-  <export target="assets/game2.json" format="json"/>
+  <export target="assets/firstlevelv1.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" name="Mine2" tilewidth="70" tileheight="70" tilecount="48" columns="6">
   <image source="../../NeuerVersuch/phaser3-typescript-parcel-template/public/assets/tiles-12.png" width="421" height="562"/>

@@ -35,8 +35,8 @@ export default class Game extends Phaser.Scene {
         this.load.atlas('coal-guy', 'assets/coal_guy2.png', 'assets/coal_guy2.json')
         this.load.atlas('mienenguy', 'assets/mienenguy.png', 'assets/mienenguy.json')
         this.load.atlas('miniMienenguy', 'assets/miniMienenguy.png', 'assets/miniMienenguy.json')
-        this.load.image('tiles', 'assets/tiles.png')
-        this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
+        this.load.image('tiles', 'assets/tiles/basic.png')
+        this.load.tilemapTiledJSON('tilemap', 'assets/firstlevelv1.json')
         this.load.image('diamond', 'assets/diamond2.png')
         this.load.image('health', 'assets/heart.png')
         
@@ -47,9 +47,9 @@ export default class Game extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'tilemap' })
         const tileset = map.addTilesetImage('Miene', 'tiles')
     
-        const background = map.createLayer('background', tileset)
-        const ground = map.createLayer('ground', tileset)
-        ground.setCollisionByProperty({ collides: true })
+        const vordergrund = map.createLayer('vordergrund', tileset)
+      //  const ground = map.createLayer('ground', tileset)
+        vordergrund.setCollisionByProperty({ collides: true })
         
         const overlay = map.createLayer('overlay', tileset)
 
@@ -135,14 +135,69 @@ export default class Game extends Phaser.Scene {
                     this.obstacles.add('info2', info)
                     break
                 }
-
+                case 'info3':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info3', info)
+                    break
+                }
+                case 'info4':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info4', info)
+                    break
+                }
+                case 'info5':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info5', info)
+                    break
+                }
+                case 'info6':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info6', info)
+                    break
+                }
+                case 'info7':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info7', info)
+                    break
+                }
+                case 'info8':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info8', info)
+                    break
+                }
+                case 'info9':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info9', info)
+                    break
+                }
                 
             }
         })
 
         
 
-        this.matter.world.convertTilemapLayer(ground)
+        this.matter.world.convertTilemapLayer(vordergrund)
     }
 
     private destroy(){

@@ -42,13 +42,26 @@ export default class UI extends Phaser.Scene{
         events.on('health-changed' , this.changeTheHealth, this)
 
         events.on('info', this.readInfo, this)
-
         events.on('info2', this.readInfo2, this)
+        events.on('info3', this.readInfo3, this)
+        events.on('info4', this.readInfo4, this)
+        events.on('info5', this.readInfo5, this)
+        events.on('info6', this.readInfo6, this)
+        events.on('info7', this.readInfo7, this)
+        events.on('info8', this.readInfo8, this)
+        events.on('info9', this.readInfo9, this)
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
          events.off('diamond-collected',this.handelDiamondCollected, this),
          events.off('info', this.readInfo, this),
          events.off('info2', this.readInfo2, this)
+         events.off('info3', this.readInfo3, this)
+         events.off('info4', this.readInfo4, this)
+         events.off('info5', this.readInfo5, this)
+         events.off('info6', this.readInfo6, this)
+         events.off('info7', this.readInfo7, this)
+         events.off('info8', this.readInfo8, this)
+         events.off('info9', this.readInfo9, this)
         })
     }
 
@@ -81,7 +94,7 @@ export default class UI extends Phaser.Scene{
 
 
     private readInfo(){
-        this.infoText = "Mit den Pfeiltasten kannst du dich bewegen"
+        this.infoText = "Mit den Pfeiltasten bewegst du dich, spring mit Space"
         if(this.show == true ){
             this.info.destroy()
         }
@@ -92,9 +105,9 @@ export default class UI extends Phaser.Scene{
         this.show = true
         
     }
-
+     
     private readInfo2(){
-        this.infoText = "Spring mit Space"
+        this.infoText = "Diamanten kann man sammeln, sie sind deine Punkte"
         if(this.show == true ){
             this.info.destroy()
         }
@@ -105,7 +118,103 @@ export default class UI extends Phaser.Scene{
         this.show = true
 
     }
-    
+    private readInfo3(){
+        this.infoText = "Es riecht nach fiesen Minenarbeitern, Zeit sie zu vermöbeln"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo4(){
+        this.infoText = "Besiege sie durch den klassischen Kopfsprung"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo5(){
+        this.infoText = "Die Stacheln sehen ungemütlich aus, finde einen anderen Weg"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo6(){
+        this.infoText = "Das ist ein NormCoin, suche sie alle für eine Überraschung"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo7(){
+        this.infoText = "↓ Vorsichtig, Lohren im Einsatz ↓"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo8(){
+        this.infoText = "↑ Oreichalkos Mine ↑"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo9(){
+        this.infoText = "Fahrstuhl leider außer Betrieb aufgrund eines Steinbruchs"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
+    private readInfo10(){
+        this.infoText = "→ Oreichalkos Mine →"
+        if(this.show == true ){
+            this.info.destroy()
+        }
+        this.info = this.add.text(50,100, this.infoText,{
+            fontSize: '15px'
+        })
+        this.timerEvent = this.time.delayedCall(5000, this.destroyText, [], this)
+        this.show = true
+
+    }
     private destroyText(){
         if(this.timerEvent.getProgress().toString() == "1"){
             console.log(this.timerEvent.getProgress())
