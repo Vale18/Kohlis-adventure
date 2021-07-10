@@ -45,13 +45,13 @@ export default class Game extends Phaser.Scene {
     create() {
         this.scene.launch('ui')
         const map = this.make.tilemap({ key: 'tilemap' })
-        const tileset = map.addTilesetImage('Miene', 'tiles')
+        const tileset = map.addTilesetImage('basic', 'tiles')
     
         const vordergrund = map.createLayer('vordergrund', tileset)
       //  const ground = map.createLayer('ground', tileset)
         vordergrund.setCollisionByProperty({ collides: true })
         
-        const overlay = map.createLayer('overlay', tileset)
+        // const overlay = map.createLayer('overlay', tileset)
 
        
 
