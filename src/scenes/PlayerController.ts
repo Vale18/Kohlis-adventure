@@ -20,7 +20,7 @@ export default class PlayerController{
     private lastMiniguy?: Phaser.Physics.Matter.Sprite
     private lastEmptyLore?: Phaser.Physics.Matter.Sprite
     private lastBox?: Phaser.Physics.Matter.Sprite
-    private timerEvent
+    private lastElevator?: Phaser.Physics.Matter.Sprite
 
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
@@ -68,6 +68,10 @@ export default class PlayerController{
             onEnter: this.lorenDriveOnEnter,
             onUpdate: this.lorenDirveOnUpdate
         })
+        .addState('onElevator', {
+            onEnter: this.onElevatorOnEnter,
+            onUpdate: this.onElevatorOnUpdate
+        })
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
@@ -78,8 +82,9 @@ export default class PlayerController{
                 return
             }
             if(this.obsticales.is('deadZones', body)){
-                    this.stateMachine.setState('killZone')
-                }
+                this.stateMachine.setState('killZone')
+                return
+            }
 
             if(this.obsticales.is('mienenguy', body)){
                 this.lastMienenguy = body.gameObject
@@ -100,6 +105,11 @@ export default class PlayerController{
             if(this.obsticales.is('emptyLore', body)){
                 this.lastEmptyLore = body.gameObject
                 this.stateMachine.setState('loren-drive')
+            }
+
+            if(this.obsticales.is('elevator', body)){
+                this.lastElevator = body.gameObject
+                this.stateMachine.setState('onElevator')
             }
 
             if(this.obsticales.is('destroyBox', body)){
@@ -425,33 +435,59 @@ export default class PlayerController{
         if(this.lastBox){
             if(this.lastBox.y < this.sprite.y){
                 // events.emit('distroyTheBox', this)
-               const boxdestroyer = new DestroyBoxController(this.lastBox)
-               boxdestroyer.setDestroy()
-               this.scene.tweens.add({
-                   targets: this.lastBox,
-                   alpha: {from: 1, to: 0},
-                   ease: 'Sine.InOut',
-                   duration: 500,
-                   repeat: 0,
-                   onComplete: () => {
-                       if(this.lastBox){
-                           this.lastBox.destroy()
-                       }
-                    
-                }
-                   
-               })
-
-              
+                const boxdestroyer = new DestroyBoxController(this.lastBox)
+                    boxdestroyer.setDestroy()
+                    this.scene.tweens.add({
+                    targets: this.lastBox,
+                    alpha: {from: 1, to: 0},
+                    ease: 'Sine.InOut',
+                    duration: 500,
+                    repeat: 0,
+                    onComplete: () => {
+                        if(this.lastBox){
+                            this.lastBox.destroy()
+                        }   
+                    }   
+                })
+            }
+            if(this.lastBox.y > this.sprite.y){
+                this.stateMachine.setState('idle')
             }  
-               
+        }
+    }
+
+    private onElevatorOnEnter(){
+        this.sprite.play('idle')
+    }
+
+    private onElevatorOnUpdate(){
+        if(this.lastElevator){
+           this.sprite.setVelocityY(-20)
+           this.lastElevator.setVelocityY(-20)
+           const speed = 8
+            if (this.cursors.left.isDown) {
+                this.sprite.setVelocityX(-speed)
+                this.sprite.play('player-walk')
+                this.sprite.flipX = true
+                this.stateMachine.setState('walk')
+
+            } else if (this.cursors.right.isDown) {
+                this.sprite.setVelocityX(speed)
+                this.sprite.play('player-walk')
+                this.sprite.flipX = false
+                this.stateMachine.setState('walk')
+            }else{
+                this.sprite.setVelocity(this.lastElevator.body.velocity.x,this.lastElevator.body.velocity.y )
+                this.sprite.play('player-idle')
+            }
+            if(this.cursors.space.isDown){
+                this.stateMachine.setState('jump')
+                
+            }
             
             
         }
-        
     }
-
-    
         
 
 
