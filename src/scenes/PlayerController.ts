@@ -463,17 +463,17 @@ export default class PlayerController{
 
     private onElevatorOnUpdate(){
         if(this.lastElevator){
-            this.sprite.setVelocityY(-10)
-            const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
-            eloCont.moveUpOnUpdate()
+            this.sprite.setVelocityY(0)
+            // const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
+            // eloCont.moveUpOnUpdate()
             const speed = 8
             if (this.cursors.left.isDown) {
                 this.sprite.setVelocityX(-speed)
                 this.sprite.play('player-walk')
                 this.sprite.flipX = true
                 this.stateMachine.setState('walk')
-                const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
-                eloCont.moveDownOnUpdate() 
+                // const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
+                // eloCont.moveDownOnUpdate() 
                 // this.lastElevator.setVelocityY(15)
 
             } else if (this.cursors.right.isDown) {
@@ -481,8 +481,8 @@ export default class PlayerController{
                 this.sprite.play('player-walk')
                 this.sprite.flipX = false
                 this.stateMachine.setState('walk')
-                const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
-                eloCont.moveDownOnUpdate() 
+                // const eloCont = new ElevatorController(this.scene,this.lastElevator, this.obsticales)
+                // eloCont.moveDownOnUpdate() 
                 // this.lastElevator.setVelocityY(15)
             }else{
                 this.sprite.setVelocity(this.lastElevator.body.velocity.x,this.lastElevator.body.velocity.y )

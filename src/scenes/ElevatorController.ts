@@ -8,7 +8,7 @@ export default class ElevatorController{
     private sprite: Phaser.Physics.Matter.Sprite
     private stateMachine: StateMachine
     private obsticales: ObsticalesController
-
+    private up = 1
     
 
     
@@ -22,29 +22,27 @@ export default class ElevatorController{
         this.stateMachine.addState('idle',{
             onEnter: this.idleOnEnter
         })
-        .addState('move-up', {
+        .addState('move-down', {
             onEnter: this.moveDownOnEnter,
             onUpdate: this.moveDownOnUpdate
         })
-        .addState('move-down',{
+        .addState('move-up',{
             onEnter: this.moveUpOnEnter,
             onUpdate: this.moveUpOnUpdate
         })
         .setState('move-up')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
-            const body = data.bodyA as MatterJS.BodyType
+            const body = data.bodyB as MatterJS.BodyType
             
 
             if(this.obsticales.is('elevatorTop', body)){
-                console.log('Top')
-                this.sprite.destroy()
+                this.up = 0
                 this.stateMachine.setState('move-down')
                 
             }
             if(this.obsticales.is('elevatorBottom', body)){
-                console.log('Bottom')
-                this.sprite.setVelocity(0,-10)
+                this.up = 1
                 this.stateMachine.setState('move-up')
             }
         })
@@ -59,7 +57,6 @@ export default class ElevatorController{
     }
 
     private idleOnEnter(){
-        
         this.stateMachine.setState('move-up')
     }
 
@@ -68,9 +65,12 @@ export default class ElevatorController{
     }
 
     public moveDownOnUpdate(){
-        // this.sprite.body.velocity.y + 5
-        this.sprite.setVelocityX(20)
+        this.sprite.setVelocityY(5)
         this.sprite.setVelocityX(0)
+        if(this.up === 1){
+            this.stateMachine.setState('move-up')
+        }
+        
     }
 
     private moveUpOnEnter(){
@@ -78,9 +78,11 @@ export default class ElevatorController{
     }
 
     public moveUpOnUpdate(){
-        // this.sprite.body.velocity.y - 5
-        this.sprite.setVelocityY(-20)
+        this.sprite.setVelocityY(-5)
         this.sprite.setVelocityX(0)
+        if(this.up === 0){
+            this.stateMachine.setState('move-down')
+        }
     }
 
 }
