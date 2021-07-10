@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
+import TimerEvent from "phaser"
 import StateMachine from '../statemachine/StateMachine'
+import DestroyBoxController from './DestroyBoxController'
 import EmptyLorenController from './EmptyLorenController'
 import { events } from './EventCenter'
 import ObsticalesController from './ObsticalesController'
@@ -17,6 +19,8 @@ export default class PlayerController{
     private lastMienenguy?: Phaser.Physics.Matter.Sprite
     private lastMiniguy?: Phaser.Physics.Matter.Sprite
     private lastEmptyLore?: Phaser.Physics.Matter.Sprite
+    private lastBox?: Phaser.Physics.Matter.Sprite
+    private timerEvent
 
     constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
         this.scene = scene
@@ -96,6 +100,11 @@ export default class PlayerController{
             if(this.obsticales.is('emptyLore', body)){
                 this.lastEmptyLore = body.gameObject
                 this.stateMachine.setState('loren-drive')
+            }
+
+            if(this.obsticales.is('destroyBox', body)){
+                this.lastBox = body.gameObject
+                this.destroyTheBox()
             }
 
             if(this.obsticales.is('info', body)){
@@ -291,7 +300,7 @@ export default class PlayerController{
         // this.sprite.setRotation(-1.5)
         
         //TODO: LoseScreen Anzeigen.
-        this.stateMachine.setState('idle')
+        this.stateMachine.setState('jump')
     }
 
     private mienenguyHitOnEnter(){
@@ -358,23 +367,92 @@ export default class PlayerController{
 
     private lorenDriveOnEnter(){
         if(this.lastEmptyLore){
-            const lorencontroller = new EmptyLorenController(this.scene, this.lastEmptyLore, this.obsticales)
             console.log(this.lastEmptyLore.body.velocity)
+            this.sprite.play('idle')
             
         }
     }
 
     private lorenDirveOnUpdate(){
+        var drivespeed
         if(this.lastEmptyLore){
-        // this.sprite.setVelocity(this.lastEmptyLore.body.velocity, this.lastEmptyLore.body.velocity) 
+            var playerBottemYCordinat = this.sprite.y + (this.sprite.height/2)
+            var loreTopYCordinat = this.lastEmptyLore.y - (this.lastEmptyLore.height/4)
+            console.log("Spieler: " + playerBottemYCordinat)
+            console.log("Lore: " + loreTopYCordinat)
+            if(playerBottemYCordinat > loreTopYCordinat){
+                console.log("Oh no")
+                this.stateMachine.setState('idle')
+            }
+            
+            
+            if(this.lastEmptyLore.body.velocity.x > 0){
+                this.sprite.setVelocity (this.lastEmptyLore.body.velocity.x+0.34,0)
+                this.sprite.flipX =  false
+                drivespeed = this.lastEmptyLore.body.velocity.x+0.34
+            }else{
+                this.sprite.setVelocity (this.lastEmptyLore.body.velocity.x-0.34,0)
+                this.sprite.flipX =  true
+                drivespeed = this.lastEmptyLore.body.velocity.x-0.34
+            }
+            
+            console.log(this.sprite.body.velocity)
         }
     
-        if(this.cursors.space.isDown){
-            this.sprite.setVelocityY(-8)
+        const speed = 8
+        if (this.cursors.left.isDown) {
+            this.sprite.setVelocityX(-speed)
+            this.sprite.play('player-walk')
+            this.sprite.flipX = true
+
+        } else if (this.cursors.right.isDown) {
+            this.sprite.setVelocityX(speed)
+            this.sprite.play('player-walk')
+            this.sprite.flipX = false
+        }else{
+            this.sprite.setVelocityX(drivespeed)
+            this.sprite.play('player-idle')
+        }
+
+        const spaceJustPressd = Phaser.Input.Keyboard.JustDown(this.cursors.space)
+        if (spaceJustPressd) {
             this.stateMachine.setState('jump')
+        }
+       
+    }
+
+    private destroyTheBox(){
+        if(this.lastBox){
+            if(this.lastBox.y < this.sprite.y){
+                // events.emit('distroyTheBox', this)
+               const boxdestroyer = new DestroyBoxController(this.lastBox)
+               boxdestroyer.setDestroy()
+               this.scene.tweens.add({
+                   targets: this.lastBox,
+                   alpha: {from: 1, to: 0},
+                   ease: 'Sine.InOut',
+                   duration: 500,
+                   repeat: 0,
+                   onComplete: () => {
+                       if(this.lastBox){
+                           this.lastBox.destroy()
+                       }
+                    
+                }
+                   
+               })
+
+              
+            }  
+               
+            
+            
         }
         
     }
+
+    
+        
 
 
     

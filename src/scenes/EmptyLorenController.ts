@@ -8,6 +8,7 @@ export default class EmptyLorenController{
     private sprite: Phaser.Physics.Matter.Sprite
     private stateMachine: StateMachine
     private obsticales: ObsticalesController
+    private currentState = 'move-right'
 
     private moveTime = 0
 
@@ -36,16 +37,18 @@ export default class EmptyLorenController{
             const body = data.bodyB as MatterJS.BodyType
             
             if(this.obsticales.is('rightWall', body)){
-                console.log("rechtewand")
+                console.log("Wand: rechtewand")
                 this.stateMachine.setState('move-left')
                 return
             }
 
             if(this.obsticales.is('leftWall', body)){
-                console.log("linkewand")
+                console.log("Wand: linkewand")
                 this.stateMachine.setState('move-right')
                 return
             }
+
+            
         })
 
 
@@ -60,34 +63,34 @@ export default class EmptyLorenController{
     }
 
     private idleOnEnter(){
-        this.stateMachine.setState('move-right')
+        this.stateMachine.setState(this.currentState)
     }
     
     private moveLeftOnEnter(){
         this.moveTime = 0
-        this.sprite.flipX = false
         this.moveRichtung = 1
+        this.currentState = 'move-left'
     }
 
 
     private moveLeftOnUpdate(dt: number){
         this.moveTime +=dt
         this.sprite.setVelocityX(-3)
-        if(this.moveTime > 5000){
+        if(this.moveTime > 9000){
             this.stateMachine.setState('move-right')
         }
     }
 
     private moveRightOnEnter(){
         this.moveTime = 0
-        this.sprite.flipX = false
         this.moveRichtung = 2
+        this.currentState = 'move-right'
     }
 
     private moveRightOnUpdate(dt: number){
         this.moveTime +=dt
         this.sprite.setVelocityX(3)
-        if(this.moveTime > 5000){
+        if(this.moveTime > 9000){
             this.stateMachine.setState('move-left')
         }
     }

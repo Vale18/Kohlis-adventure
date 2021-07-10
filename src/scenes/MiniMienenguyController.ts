@@ -55,7 +55,6 @@ export default class MiniMienenguyController{
         this.counter ++
         this.sprite.setVelocityX(-3)
         if(this.moveTime > 5000){
-            console.log("Left: "+this.counter)
             this.stateMachine.setState('move-right')
             this.counter = 0
         }
@@ -72,7 +71,6 @@ export default class MiniMienenguyController{
         this.sprite.setVelocityX(3)
         this.counter ++
         if(this.moveTime > 5000){
-            console.log("Right: "+this.counter)
             this.stateMachine.setState('move-left')
             this.counter = 0
         }

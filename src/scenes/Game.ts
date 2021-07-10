@@ -4,6 +4,7 @@ import ObsticalesController from './ObsticalesController'
 import MienenguyController from './MienenguyController'
 import MiniMienenguyController from './MiniMienenguyController'
 import EmptyLorenController from './EmptyLorenController'
+import DestroyBoxController from './DestroyBoxController'
 
 export default class Game extends Phaser.Scene {
 
@@ -15,6 +16,7 @@ export default class Game extends Phaser.Scene {
     private mienenguy: MienenguyController[] = []
     private miniMienenguy: MiniMienenguyController[] = []
     private emptyLore: EmptyLorenController[] = []
+    private destroyBox: DestroyBoxController[] = []
 
     private isTouchingGround = false
 
@@ -28,6 +30,7 @@ export default class Game extends Phaser.Scene {
         this.mienenguy = []
         this.miniMienenguy = []
         this.emptyLore = []
+        this.destroyBox = []
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
             this.destroy()
@@ -38,11 +41,13 @@ export default class Game extends Phaser.Scene {
         this.load.atlas('coal-guy', 'assets/coal_guy2.png', 'assets/coal_guy2.json')
         this.load.atlas('mienenguy', 'assets/mienenguy.png', 'assets/mienenguy.json')
         this.load.atlas('miniMienenguy', 'assets/miniMienenguy.png', 'assets/miniMienenguy.json')
+        this.load.atlas('destroyBox', 'assets/destroyBox.png', 'assets/destroyBox.json')
         this.load.image('tiles', 'assets/tiles.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
         this.load.image('diamond', 'assets/diamond2.png')
         this.load.image('health', 'assets/heart.png')
         this.load.image('emptyLore', 'assets/emptylore.png')
+        
         
     }
 
@@ -70,6 +75,7 @@ export default class Game extends Phaser.Scene {
                         .setFixedRotation()
 
                     this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles)
+                    
 
                     this.cameras.main.startFollow(this.player)
 
@@ -100,6 +106,14 @@ export default class Game extends Phaser.Scene {
                     break
                 }
 
+                case 'destroyBox-spawn':{
+                    const destroyBox=this.matter.add.sprite(x+(width*0.5),y, 'destroyBox', undefined, {
+                        isStatic: true
+                    })
+                    this.destroyBox.push(new DestroyBoxController(destroyBox))
+                    this.obstacles.add('destroyBox', destroyBox.body as MatterJS.BodyType)
+                    break
+                }
                 
 
                 case 'diamond':{
