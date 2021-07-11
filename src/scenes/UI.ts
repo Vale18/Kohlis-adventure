@@ -39,6 +39,8 @@ export default class UI extends Phaser.Scene{
         })
         events.on('diamond-collected',this.handelDiamondCollected, this)
 
+        events.on('bigdiamond-collected',this.handelBigDiamondCollected, this)
+
         events.on('health-changed' , this.changeTheHealth, this)
 
         events.on('info', this.readInfo, this)
@@ -47,6 +49,7 @@ export default class UI extends Phaser.Scene{
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
          events.off('diamond-collected',this.handelDiamondCollected, this),
+         events.off('bigdiamond-collected',this.handelBigDiamondCollected, this)
          events.off('info', this.readInfo, this),
          events.off('info2', this.readInfo2, this)
         })
@@ -118,6 +121,11 @@ export default class UI extends Phaser.Scene{
 
     private handelDiamondCollected(){
         this.diamondCollected++
+        this.diamondLabe.text =  `${this.diamondCollected}`
+    }
+
+    private handelBigDiamondCollected(){
+        this.diamondCollected +=5
         this.diamondLabe.text =  `${this.diamondCollected}`
     }
 

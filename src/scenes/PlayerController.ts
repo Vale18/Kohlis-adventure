@@ -117,13 +117,17 @@ export default class PlayerController{
                 this.stateMachine.setState('onElevator')
             }
 
+            if(this.obsticales.is('elevator2', body)){
+                this.lastElevator = body.gameObject
+                this.stateMachine.setState('onElevator')
+            }
+
             if(this.obsticales.is('destroyBox', body)){
                 this.lastBox = body.gameObject
                 this.destroyTheBox()
             }
 
             if(this.obsticales.is('mienenBlockTrigger', body)){
-                console.log('Mienecart looooossss')
                 events.emit('startMienenCart')
             }
 
@@ -162,6 +166,11 @@ export default class PlayerController{
                 case 'diamond':{
                     
                     events.emit('diamond-collected')
+                    sprite.destroy()
+                    break
+                }
+                case 'bigdiamond':{
+                    events.emit('bigdiamond-collected')
                     sprite.destroy()
                     break
                 }

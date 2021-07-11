@@ -62,6 +62,7 @@ export default class Game extends Phaser.Scene {
         const tileset = map.addTilesetImage('Miene', 'tiles')
     
         const background = map.createLayer('background', tileset)
+        const backgroundOverlay = map.createLayer('backgroundOverlay', tileset)
         const ground = map.createLayer('ground', tileset)
         ground.setCollisionByProperty({ collides: true })
         
@@ -115,6 +116,17 @@ export default class Game extends Phaser.Scene {
                     break
                 }
 
+                case 'Bigdiamond':{
+                    const diamont = this.matter.add.sprite(x+(width*0.5),y+(height*0.5),'diamond', undefined ,{
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    diamont.setScale(2)
+                    diamont.setData('type', 'bigdiamond')
+
+                    break
+                }
+
                 case 'destroyBox-spawn':{
                     const destroyBox=this.matter.add.sprite(x+(width*0.5),y+(height*0.5), 'destroyBox', undefined, {
                         isStatic: true
@@ -157,6 +169,13 @@ export default class Game extends Phaser.Scene {
                         .setFixedRotation()
                     this.obstacles.add('elevator', elevator.body as MatterJS.BodyType)
                     this.elevator.push(new ElevatorController(this, elevator, this.obstacles))
+                    break
+                }
+                case 'elevator2':{
+                    const elevator2 = this.matter.add.sprite(x+(width*0.5), y+(height*0.5), 'elevator')
+                        .setFixedRotation()
+                    this.obstacles.add('elevator2', elevator2.body as MatterJS.BodyType)
+                    this.elevator.push(new ElevatorController(this, elevator2, this.obstacles))
                     break
                 }
 
