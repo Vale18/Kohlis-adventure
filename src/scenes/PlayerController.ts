@@ -23,12 +23,19 @@ export default class PlayerController{
     private lastBox?: Phaser.Physics.Matter.Sprite
     private lastElevator?: Phaser.Physics.Matter.Sprite
 
+    //--- Sounds ----
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController){
+    private boxBreakSound
+
+   
+
+
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController, boxBreakSound: Phaser.Sound.BaseSound){
         this.scene = scene
         this.sprite = sprite
         this.cursors = cursors
         this.obsticales = obsticales
+        this.boxBreakSound = boxBreakSound
 
         this.createAnimations()
 
@@ -471,6 +478,7 @@ export default class PlayerController{
         if(this.lastBox){
             if(this.lastBox.y+(this.lastBox.height/2) < this.sprite.y){
                 // events.emit('distroyTheBox', this)
+                this.boxBreakSound.play()
                 const boxdestroyer = new DestroyBoxController(this.lastBox)
                     boxdestroyer.setDestroy()
                     this.scene.tweens.add({

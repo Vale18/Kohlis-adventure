@@ -22,6 +22,8 @@ export default class Game extends Phaser.Scene {
     private elevator: ElevatorController[] = []
     private mienenBlock
     private isTouchingGround = false
+    private boxBreakSound 
+    private mienenGuySound
 
     constructor() {
         super('game')
@@ -52,6 +54,10 @@ export default class Game extends Phaser.Scene {
         this.load.image('health', 'assets/heart.png')
         this.load.image('emptyLore', 'assets/emptylore.png')
         this.load.image('elevator', 'assets/woodelevator.png')
+
+        //---------Sounds----------
+        this.load.audio('boxBreak', 'sounds/boxBreak.wav')
+        this.load.audio('mienenGuySound', 'sounds/mienenGuy.wav')
         
         
     }
@@ -67,7 +73,8 @@ export default class Game extends Phaser.Scene {
         ground.setCollisionByProperty({ collides: true })
         
         
-
+        this.boxBreakSound = this.sound.add('boxBreak')
+        this.mienenGuySound = this.sound.add('mienenGuySound')
        
 
         const objectsLayer = map.getObjectLayer('objects')
@@ -80,7 +87,7 @@ export default class Game extends Phaser.Scene {
                         .setScale(0.8)
                         .setFixedRotation()
 
-                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles)
+                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles, this.sound.add('boxBreak'))
                     
 
                     this.cameras.main.startFollow(this.player)
@@ -100,7 +107,7 @@ export default class Game extends Phaser.Scene {
                     const mienenguy = this.matter.add.sprite(x,y, 'mienenguy')
                         .setScale(1.2)
                         .setFixedRotation()
-                    this.mienenguy.push(new MienenguyController(this, mienenguy))
+                    this.mienenguy.push(new MienenguyController(this, mienenguy,this.mienenGuySound))
                     this.obstacles.add('mienenguy', mienenguy.body as MatterJS.BodyType)
                     break
                 }
@@ -261,6 +268,7 @@ export default class Game extends Phaser.Scene {
         
         
     }
+    
 
     private destroy(){
        this.mienenguy.forEach(mienenguy => mienenguy.destroy())
