@@ -156,6 +156,10 @@ export default class PlayerController{
             if(this.obsticales.is('mienencartStop', body)){
                 events.emit('stopMienenCart')
             }
+            if(this.obsticales.is('breaktriggers', body)){
+                console.log('Break')
+                events.emit('breaktrigger')
+            }
 
             if(this.obsticales.is('info', body)){
                 events.emit('info')

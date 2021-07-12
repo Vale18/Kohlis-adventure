@@ -9,6 +9,9 @@ export default class BreakingWoodController{
     private stateMachine: StateMachine
     private obsticales: ObsticalesController
     private up = 1
+    private posX
+    private posY
+    private break = false
     
 
     
@@ -32,16 +35,36 @@ export default class BreakingWoodController{
 
         
 
-        // this.sprite.setIgnoreGravity(true)
+        this.sprite.setIgnoreGravity(true)
+        this.posY = this.sprite.body.position.y
+        this.posX = this.sprite.body.position.x
+
+        events.on('breaktrigger', this.breakTheWood, this)
+        
 
 
     }
     update(dt: number){
         this.stateMachine.update(dt)
+        if(!this.break){
+            this.corectThePosition(dt)
+        }
+        
+    }
+
+    private corectThePosition(dt: number){
+        if(this.sprite.body.position.x !== this.posX ||this.sprite.body.position.y !== this.posY  ){
+                this.sprite.setPosition(this.posX, this.posY)
+            }
+    }
+    
+    private breakTheWood(){
+        this.break = true
+        this.stateMachine.setState('break')
     }
 
     private idleOnEnter(){
-        this.sprite.isStatic
+        this.sprite.isStatic()
        
     }
     private idleOnUpdate(){
@@ -51,28 +74,13 @@ export default class BreakingWoodController{
 
 
     private breakOnEnter(){
-
+        this.sprite.destroy()
+        events.off('breaktrigger', this.breakTheWood, this)
     }
 
     public breakOnUpdate(){
-        this.sprite.setVelocityY(5)
-        this.sprite.setVelocityX(0)
-        if(this.up === 1){
-            this.stateMachine.setState('move-up')
-        }
         
     }
 
-    private moveUpOnEnter(){
-
-    }
-
-    public moveUpOnUpdate(){
-        this.sprite.setVelocityY(-5)
-        this.sprite.setVelocityX(0)
-        if(this.up === 0){
-            this.stateMachine.setState('move-down')
-        }
-    }
 
 }

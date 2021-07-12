@@ -214,8 +214,7 @@ export default class Game extends Phaser.Scene {
                 }
                 case 'breakingWood':{
                     const breakingWood = this.matter.add.sprite(x+(width*0.5), y+(height*0.5), 'elevator')
-                        .setFixedRotation()
-                    breakingWood.isStatic()
+                        .setFixedRotation()    
                     this.obstacles.add('breakingwood', breakingWood.body as MatterJS.BodyType)
                     this.breakingWood.push(new BreakingWoodController(this, breakingWood, this.obstacles))
                     break
@@ -265,6 +264,14 @@ export default class Game extends Phaser.Scene {
                         isSensor: true
                     })
                     this.obstacles.add('mienenBlockTrigger', mienenBlockTrigger)
+                    break
+                }
+                case 'breaktrigger':{
+                    const breaktrigger = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    this.obstacles.add('breaktriggers', breaktrigger)
                     break
                 }
                 case 'mienencartStop':{
@@ -390,6 +397,7 @@ export default class Game extends Phaser.Scene {
         this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.update(dt))
         this.emptyLore.forEach(emptyLore => emptyLore.update(dt))
         this.elevator.forEach(elevator => elevator.update(dt))
+        this.breakingWood.forEach(breakingWood => breakingWood.update(dt))
 
         
 
