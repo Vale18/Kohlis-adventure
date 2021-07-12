@@ -1,3 +1,4 @@
+import { Query } from "matter"
 import Phaser from "phaser"
 import TimerEvent from "phaser"
 import { events } from './EventCenter'
@@ -12,6 +13,8 @@ export default class UI extends Phaser.Scene{
     private info!: Phaser.GameObjects.Text
     private timerEvent
     private show = false
+    private nonoSound
+    private diamondSound
 
     constructor(){
         super({
@@ -24,13 +27,17 @@ export default class UI extends Phaser.Scene{
 
     preload(){
         this.load.image('diamond', 'assets/diamond2.png')
+        this.load.audio('nono', 'sounds/nono.wav' )
+        this.load.audio('diamondSound', 'sounds/diamond.wav')
     }
 
     create(){
 
         this.graphics = this.add.graphics()
         this.setHealthBar(100)
-
+        
+        this.nonoSound = this.sound.add('nono')
+        this.diamondSound = this.sound.add('diamondSound')
 
         const uiDiamond = this.add.image(20,50, 'diamond')
         .setScale(1)
@@ -81,6 +88,8 @@ export default class UI extends Phaser.Scene{
         if(prozent > 0){
             this.graphics.fillStyle(0x00ff00)
             this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
+        }else{
+            this.nonoSound.play()
         }
         
     }
@@ -248,11 +257,13 @@ export default class UI extends Phaser.Scene{
     }
 
     private handelDiamondCollected(){
+        this.diamondSound.play()
         this.diamondCollected++
         this.diamondLabe.text =  `${this.diamondCollected}`
     }
 
     private handelBigDiamondCollected(){
+        this.diamondSound.play()
         this.diamondCollected +=5
         this.diamondLabe.text =  `${this.diamondCollected}`
     }

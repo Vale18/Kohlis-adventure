@@ -26,16 +26,18 @@ export default class PlayerController{
     //--- Sounds ----
 
     private boxBreakSound
+    private jumpSound
 
    
 
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController, boxBreakSound: Phaser.Sound.BaseSound){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController, boxBreakSound: Phaser.Sound.BaseSound, jumpSound: Phaser.Sound.BaseSound){
         this.scene = scene
         this.sprite = sprite
         this.cursors = cursors
         this.obsticales = obsticales
         this.boxBreakSound = boxBreakSound
+        this.jumpSound = jumpSound
 
         this.createAnimations()
 
@@ -288,6 +290,7 @@ export default class PlayerController{
     private jumpOnEnter(){
         this.sprite.setVelocityY(-10)
         this.sprite.play('player-jump')
+        this.jumpSound.play()
     }
 
     private jumpOnUpdate(){

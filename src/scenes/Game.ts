@@ -24,6 +24,8 @@ export default class Game extends Phaser.Scene {
     private isTouchingGround = false
     private boxBreakSound 
     private mienenGuySound
+    private jumpSound
+    private backgroundMusic
 
     constructor() {
         super('game')
@@ -56,8 +58,10 @@ export default class Game extends Phaser.Scene {
         this.load.image('elevator', 'assets/woodelevator.png')
 
         //---------Sounds----------
+        this.load.audio('backgroundMusic', 'sound/background.wav')
         this.load.audio('boxBreak', 'sounds/boxBreak.wav')
         this.load.audio('mienenGuySound', 'sounds/mienenGuy.wav')
+        this.load.audio('jumpSound', 'sounds/jump.wav')
         
         
     }
@@ -75,6 +79,11 @@ export default class Game extends Phaser.Scene {
         
         this.boxBreakSound = this.sound.add('boxBreak')
         this.mienenGuySound = this.sound.add('mienenGuySound')
+        this.jumpSound = this.sound.add('jumpSound')
+        // console.log('Hier bin ich ')
+        // this.backgroundMusic = this.sound.add('backgroundMusic')
+        // console.log('Hier bin ich auch')
+        
        
 
         const objectsLayer = map.getObjectLayer('objects')
@@ -87,7 +96,7 @@ export default class Game extends Phaser.Scene {
                         .setScale(0.8)
                         .setFixedRotation()
 
-                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles, this.sound.add('boxBreak'))
+                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles, this.boxBreakSound, this.jumpSound)
                     
 
                     this.cameras.main.startFollow(this.player)
