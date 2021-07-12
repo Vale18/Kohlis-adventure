@@ -424,7 +424,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="objects">
-  <object id="1" name="penguin-spawn" x="8099.27" y="1165.85" width="68.75" height="69.0833"/>
+  <object id="1" name="penguin-spawn" x="5465.93" y="1171.91" width="68.75" height="69.0833"/>
   <object id="4" name="info" x="157" y="3302" width="260.666" height="121.333">
    <properties>
     <property name="InfoID" type="int" value="0"/>
