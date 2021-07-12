@@ -216,7 +216,7 @@ export default class Game extends Phaser.Scene {
                     const breakingWood = this.matter.add.sprite(x+(width*0.5), y+(height*0.5), 'elevator')
                         .setFixedRotation()    
                     this.obstacles.add('breakingwood', breakingWood.body as MatterJS.BodyType)
-                    this.breakingWood.push(new BreakingWoodController(this, breakingWood, this.obstacles))
+                    this.breakingWood.push(new BreakingWoodController(this, breakingWood, this.obstacles, this.boxBreakSound))
                     break
                 }
 

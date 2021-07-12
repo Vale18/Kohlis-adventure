@@ -8,7 +8,7 @@ export default class BreakingWoodController{
     private sprite: Phaser.Physics.Matter.Sprite
     private stateMachine: StateMachine
     private obsticales: ObsticalesController
-    private up = 1
+    private breakSound
     private posX
     private posY
     private break = false
@@ -16,10 +16,11 @@ export default class BreakingWoodController{
 
     
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, obsticales: ObsticalesController){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, obsticales: ObsticalesController, breakSound: Phaser.Sound.BaseSound){
         this.scene = scene
         this.sprite = sprite
         this.obsticales = obsticales
+        this.breakSound = breakSound
         this.stateMachine = new StateMachine(this, 'breakingWood')
 
         this.stateMachine.addState('idle',{
@@ -60,6 +61,7 @@ export default class BreakingWoodController{
     
     private breakTheWood(){
         this.break = true
+        this.breakSound.play()
         this.stateMachine.setState('break')
     }
 
