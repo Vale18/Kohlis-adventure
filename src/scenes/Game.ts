@@ -257,7 +257,78 @@ export default class Game extends Phaser.Scene {
                     this.obstacles.add('info2', info)
                     break
                 }
-
+                case 'info3':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info3', info)
+                    break
+                }
+                case 'info4':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info4', info)
+                    break
+                }
+                case 'info5':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info5', info)
+                    break
+                }
+                case 'info6':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info6', info)
+                    break
+                }
+                case 'info7':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info7', info)
+                    break
+                }
+                case 'info8':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info8', info)
+                    break
+                }
+                case 'info9':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info9', info)
+                    break
+                }
+                case 'info10':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info10', info)
+                    break
+                }
+                case 'info11':{
+                    const info = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true,
+                    })
+                    this.obstacles.add('info11', info)
+                    break
+                }
                 
             }
         })
