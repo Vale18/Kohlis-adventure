@@ -85,10 +85,19 @@ export default class UI extends Phaser.Scene{
         this.graphics.clear()
         this.graphics.fillStyle(0x808080)  
         this.graphics.fillRoundedRect(10, 10, width, 20, 5)
-        if(prozent > 0){
+        if(prozent > 0.5 ){
+            console.log(prozent)
             this.graphics.fillStyle(0x00ff00)
             this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
-        }else{
+        }
+        else if(prozent < 0.5 && prozent > 0.25){
+            this.graphics.fillStyle(0xffa500)
+            this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
+        }else if (prozent > 0 && prozent < 0.25){
+            this.graphics.fillStyle(0xFF0000)
+            this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
+        }
+        else{
             this.nonoSound.play()
         }
         

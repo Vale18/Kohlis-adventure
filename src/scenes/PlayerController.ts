@@ -22,22 +22,36 @@ export default class PlayerController{
     private lastEmptyLore?: Phaser.Physics.Matter.Sprite
     private lastBox?: Phaser.Physics.Matter.Sprite
     private lastElevator?: Phaser.Physics.Matter.Sprite
+   
 
     //--- Sounds ----
 
     private boxBreakSound
     private jumpSound
+    private lifeSound
+    private damageSound
 
    
 
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, cursors: CursorKeys, obsticales: ObsticalesController, boxBreakSound: Phaser.Sound.BaseSound, jumpSound: Phaser.Sound.BaseSound){
+    constructor(
+                scene: Phaser.Scene,
+                sprite: Phaser.Physics.Matter.Sprite,
+                cursors: CursorKeys, obsticales: ObsticalesController,
+                boxBreakSound: Phaser.Sound.BaseSound,
+                jumpSound: Phaser.Sound.BaseSound,
+                lifeSound: Phaser.Sound.BaseSound,
+                damageSound: Phaser.Sound.BaseSound
+            ){
+
         this.scene = scene
         this.sprite = sprite
         this.cursors = cursors
         this.obsticales = obsticales
         this.boxBreakSound = boxBreakSound
         this.jumpSound = jumpSound
+        this.lifeSound = lifeSound
+        this.damageSound = damageSound
 
         this.createAnimations()
 
@@ -139,6 +153,9 @@ export default class PlayerController{
             if(this.obsticales.is('mienenBlockTrigger', body)){
                 events.emit('startMienenCart')
             }
+            if(this.obsticales.is('mienencartStop', body)){
+                events.emit('stopMienenCart')
+            }
 
             if(this.obsticales.is('info', body)){
                 events.emit('info')
@@ -231,6 +248,7 @@ export default class PlayerController{
                     this.health += Phaser.Math.Clamp(value, 0, 100)
                     events.emit('health-changed', this.health)
                     sprite.destroy()
+                    this.lifeSound.play()
                     break
                 }
             }
@@ -328,6 +346,7 @@ export default class PlayerController{
         this.sprite.setVelocityY(-12)
         this.health = Phaser.Math.Clamp(this.health - 20, 0,100)
         events.emit('health-changed', this.health)
+        this.damageSound.play()
         const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
         const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
         this.scene.tweens.addCounter({
@@ -354,7 +373,7 @@ export default class PlayerController{
             }
         })
 
-        this.stateMachine.setState('jump')
+        this.stateMachine.setState('idle')
     }
 
     private killZoneOnEnter(){
@@ -438,6 +457,7 @@ export default class PlayerController{
 
         this.health = Phaser.Math.Clamp(this.health - 25, 0,100)
         events.emit('health-changed', this.health)
+        this.damageSound.play()
     }
 
     private miniguyHitOnEnter(){

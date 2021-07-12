@@ -7,6 +7,7 @@ import MiniMienenguyController from './MiniMienenguyController'
 import EmptyLorenController from './EmptyLorenController'
 import DestroyBoxController from './DestroyBoxController'
 import ElevatorController from './ElevatorController'
+import BreakingWoodController from './BreakingWoodController'
 
 export default class Game extends Phaser.Scene {
 
@@ -20,12 +21,16 @@ export default class Game extends Phaser.Scene {
     private emptyLore: EmptyLorenController[] = []
     private destroyBox: DestroyBoxController[] = []
     private elevator: ElevatorController[] = []
+    private breakingWood: BreakingWoodController[] = []
     private mienenBlock
     private isTouchingGround = false
     private boxBreakSound 
     private mienenGuySound
     private jumpSound
     private backgroundMusic
+    private lifeSound
+    private damageSound
+    private mienenCartSound
 
     constructor() {
         super('game')
@@ -58,10 +63,14 @@ export default class Game extends Phaser.Scene {
         this.load.image('elevator', 'assets/woodelevator.png')
 
         //---------Sounds----------
-        this.load.audio('backgroundMusic', 'sound/background.wav')
+        this.load.audio('caveSound', 'sound/test.wav')
         this.load.audio('boxBreak', 'sounds/boxBreak.wav')
-        this.load.audio('mienenGuySound', 'sounds/mienenGuy.wav')
+        this.load.audio('mienenGuySound', 'sounds/kill_mienenGuy.ogg')
         this.load.audio('jumpSound', 'sounds/jump.wav')
+        this.load.audio('lifeSound', 'sounds/life.wav')
+        this.load.audio('damageSound', 'sounds/damage.ogg')
+        this.load.audio('mienencartSound', 'sounds/mienenCart.wav')
+        
         
         
     }
@@ -76,12 +85,14 @@ export default class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset)
         ground.setCollisionByProperty({ collides: true })
         
-        
+        // this.backgroundMusic = this.sound.add('caveSound')
         this.boxBreakSound = this.sound.add('boxBreak')
         this.mienenGuySound = this.sound.add('mienenGuySound')
         this.jumpSound = this.sound.add('jumpSound')
-        // console.log('Hier bin ich ')
-        // this.backgroundMusic = this.sound.add('backgroundMusic')
+        this.lifeSound = this.sound.add('lifeSound')
+        this.damageSound = this.sound.add('damageSound')
+        this.mienenCartSound = this.sound.add('mienencartSound', {loop: true})
+        
         // console.log('Hier bin ich auch')
         
        
@@ -96,7 +107,7 @@ export default class Game extends Phaser.Scene {
                         .setScale(0.8)
                         .setFixedRotation()
 
-                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles, this.boxBreakSound, this.jumpSound)
+                    this.playerController = new PlayerController(this, this.player, this.cursors, this.obstacles, this.boxBreakSound, this.jumpSound, this.lifeSound, this.damageSound)
                     
 
                     this.cameras.main.startFollow(this.player)
@@ -140,6 +151,13 @@ export default class Game extends Phaser.Scene {
                     diamont.setScale(2)
                     diamont.setData('type', 'bigdiamond')
 
+                    break
+                }
+
+                case 'block':{
+                    const block = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                    } )
                     break
                 }
 
@@ -194,6 +212,14 @@ export default class Game extends Phaser.Scene {
                     this.elevator.push(new ElevatorController(this, elevator2, this.obstacles))
                     break
                 }
+                case 'breakingWood':{
+                    const breakingWood = this.matter.add.sprite(x+(width*0.5), y+(height*0.5), 'elevator')
+                        .setFixedRotation()
+                    breakingWood.isStatic()
+                    this.obstacles.add('breakingwood', breakingWood.body as MatterJS.BodyType)
+                    this.breakingWood.push(new BreakingWoodController(this, breakingWood, this.obstacles))
+                    break
+                }
 
                 case 'hitbox':{
                     const hitbox = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
@@ -222,7 +248,7 @@ export default class Game extends Phaser.Scene {
                     const emptyLore = this.matter.add.sprite(x+(width*0.5), y+(height*0.5), 'emptyLore')
                         .setFixedRotation()
                     this.obstacles.add('emptyLore', emptyLore.body as MatterJS.BodyType)
-                    this.emptyLore.push(new EmptyLorenController(this, emptyLore, this.obstacles))
+                    this.emptyLore.push(new EmptyLorenController(this, emptyLore, this.obstacles, this.mienenCartSound))
                     break
                 }
                 case 'deadZone':{
@@ -233,19 +259,20 @@ export default class Game extends Phaser.Scene {
                     break
                 }
 
-                // case 'mienenBlock':{
-                //     this.mienenBlock = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
-                //         isStatic: true,
-                //     })
-                //     this.obstacles.add('mienenBlock', this.mienenBlock)
-                //     break
-                // }
                 case 'mienenBlockTrigger':{
                     const mienenBlockTrigger = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
                         isStatic: true,
                         isSensor: true
                     })
                     this.obstacles.add('mienenBlockTrigger', mienenBlockTrigger)
+                    break
+                }
+                case 'mienencartStop':{
+                    const mienencartStop = this.matter.add.rectangle(x+(width*0.5), y+(height*0.5), width, height, {
+                        isStatic: true,
+                        isSensor: true
+                    })
+                    this.obstacles.add('mienencartStop', mienencartStop)
                     break
                 }
 

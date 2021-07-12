@@ -9,14 +9,17 @@ export default class EmptyLorenController{
     private stateMachine: StateMachine
     private obsticales: ObsticalesController
 
+    private mienenCartSound
+
     private moveTime = 0
 
     
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, obsticales: ObsticalesController){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, obsticales: ObsticalesController, mienenCartSound: Phaser.Sound.BaseSound){
         this.scene = scene
         this.sprite = sprite
         this.obsticales = obsticales
+        this.mienenCartSound = mienenCartSound
         this.stateMachine = new StateMachine(this, 'emptyLore')
 
         this.stateMachine.addState('idle',{
@@ -48,11 +51,16 @@ export default class EmptyLorenController{
         })
 
         events.on('startMienenCart', this.startTheCart, this)
+        events.on('stopMienenCart', this.stopTheCart, this)
 
     }
 
     private startTheCart(){
-        this.stateMachine.setState('move-left')
+        this.stateMachine.setState('move-right')
+    }
+
+    private stopTheCart(){
+        this.stateMachine.setState('idle')
     }
 
     
@@ -61,10 +69,12 @@ export default class EmptyLorenController{
 
     private idleOnEnter(){
         // this.stateMachine.setState('move-left')
+        this.mienenCartSound.stop()
     }
     
     private moveLeftOnEnter(){
         this.moveTime = 0
+        this.mienenCartSound.play()
     }
 
 
@@ -72,6 +82,8 @@ export default class EmptyLorenController{
         this.moveTime +=dt
         this.sprite.setVelocityX(-3)
         console.log('Speed' + this.sprite.body.velocity)
+        
+        
         // if(this.moveTime > 9000){
         //     this.stateMachine.setState('move-right')
         // }
@@ -91,6 +103,7 @@ export default class EmptyLorenController{
 
     destroy(){
         events.off('startMienenCart', this.startTheCart, this)
+        events.off('stopMienenCart', this.stopTheCart, this)
     }
     update(dt: number){
         this.stateMachine.update(dt)
