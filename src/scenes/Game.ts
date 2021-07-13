@@ -40,6 +40,7 @@ export default class Game extends Phaser.Scene {
     }
 
     init() {
+        this.scene.restart()
         this.cursors = this.input.keyboard.createCursorKeys()
         this.obstacles = new ObsticalesController()
         this.mienenguy = []

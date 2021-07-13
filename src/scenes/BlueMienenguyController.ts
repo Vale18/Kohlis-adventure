@@ -43,13 +43,12 @@ export default class BlueMienenguyController{
         .addState('dead')
         .setState('move')
 
-        events.on('startTheGuys', this.startTheGuys, this)
+        
         events.on('kill-blueMienenguy', this.kill, this)
         
     }
 
     destroy(){
-        events.off('startTheGuys', this.startTheGuys, this)
         
     }
 
@@ -61,9 +60,7 @@ export default class BlueMienenguyController{
     public setPlayerX(playerX){
         this.playerX = playerX
     }
-    private startTheGuys(){
-        this.stateMachine.setState('move')
-    }
+    
 
     private kill(blueMienenguy: Phaser.Physics.Matter.Sprite){
         if(this.sprite !== blueMienenguy){
@@ -87,6 +84,7 @@ export default class BlueMienenguyController{
                 onComplete: () => {
                     this.sprite.destroy()
                     events.emit('BossIsDead')
+                    events.emit('EndScreen')
                 }
             })
         }

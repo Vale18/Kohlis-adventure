@@ -49,7 +49,7 @@ export default class UI extends Phaser.Scene{
         events.on('bigdiamond-collected',this.handelBigDiamondCollected, this)
 
         events.on('health-changed' , this.changeTheHealth, this)
-
+        events.on('EndScreen', this.showEndscreen, this)
         events.on('info', this.readInfo, this)
         events.on('info2', this.readInfo2, this)
         events.on('info3', this.readInfo3, this)
@@ -76,6 +76,7 @@ export default class UI extends Phaser.Scene{
          events.off('info9', this.readInfo9, this)
          events.off('info10', this.readInfo10, this)
          events.off('info11', this.readInfo11, this)
+         events.off('endScreen', this.showEndscreen, this)
         })
     }
 
@@ -275,6 +276,11 @@ export default class UI extends Phaser.Scene{
         this.diamondSound.play()
         this.diamondCollected +=5
         this.diamondLabe.text =  `${this.diamondCollected}`
+    }
+
+    private showEndscreen(){
+        events.emit('changeToEndscreen', this.diamondCollected)
+        this.scene.switch('endScreen')
     }
 
 }

@@ -8,11 +8,11 @@ export default class TitleScene extends Phaser.Scene{
             key:'titleScene'
         });
 	}
-    preload = function() {
+    preload(){
         this.load.image('background', 'assets/titleScreenBackground.png');
     };
 
-    create = function() {
+    create() {
         var bg = this.add.image(0,0,'background');
         bg.setOrigin(0,0);
         var title = this.add.text(150,100, 'Willkommen zu KOHLIS-ADVENTURE!', {fontFamily: 'Georgia', fontSize: '20px'});
@@ -21,7 +21,9 @@ export default class TitleScene extends Phaser.Scene{
         text.on('pointerdown', () => this.clickButton());
     };
     private clickButton() {
-        this.scene.switch('game');
+        this.scene.switch('game')
+        // this.scene.launch('game')
+        
     }
 
 //export default TitleScene;
