@@ -22,6 +22,7 @@ export default class PlayerController{
     private lastEmptyLore?: Phaser.Physics.Matter.Sprite
     private lastBox?: Phaser.Physics.Matter.Sprite
     private lastElevator?: Phaser.Physics.Matter.Sprite
+    private lastBluemienenguy ?: Phaser.Physics.Matter.Sprite
    
 
     //--- Sounds ----
@@ -30,6 +31,11 @@ export default class PlayerController{
     private jumpSound
     private lifeSound
     private damageSound
+
+
+    //--Andere Sachen----
+
+    private BossLifePoints 
 
    
 
@@ -52,6 +58,7 @@ export default class PlayerController{
         this.jumpSound = jumpSound
         this.lifeSound = lifeSound
         this.damageSound = damageSound
+        this.BossLifePoints = 10
 
         this.createAnimations()
 
@@ -101,6 +108,12 @@ export default class PlayerController{
             onEnter: this.onElevatorOnEnter,
             onUpdate: this.onElevatorOnUpdate
         })
+        .addState('jumpOnBluemienenguy',{
+            onEnter: this.JumpOnBluemienenguy
+        })
+        .addState('bluemienenguy-hit', {
+            onEnter: this.bluemienenguyHitOnEnter
+        })
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
@@ -123,6 +136,17 @@ export default class PlayerController{
                     this.stateMachine.setState('mienenguy-hit')
                 }
                 return
+            }
+
+            if(this.obsticales.is('blueMineneguy', body)){
+                console.log('BlauerMann')
+                this.lastBluemienenguy = body.gameObject
+                if(this.sprite.y < body.position.y){
+                    this.stateMachine.setState('jumpOnBluemienenguy')
+                }else{
+                    this.stateMachine.setState('bluemienenguy-hit')
+                }
+                
             }
 
             if(this.obsticales.is('miniMienenguy', body)){
@@ -261,6 +285,10 @@ export default class PlayerController{
 
     update(dt: number){
         this.stateMachine.update(dt)
+    }
+
+    public getX(){
+        return this.sprite.body.position.x
     }
 
     private idleOnEnter(){
@@ -609,6 +637,47 @@ export default class PlayerController{
             
             
         }
+    }
+
+    private JumpOnBluemienenguy(){
+        this.sprite.setVelocityY(-5)
+        this.BossLifePoints--
+        console.log('Boss: '+this.BossLifePoints)
+        this.stateMachine.setState('jump')
+        if(this.BossLifePoints === 0){
+            events.emit('kill-blueMienenguy', this.lastBluemienenguy)
+        }
+    }
+
+    private bluemienenguyHitOnEnter(){
+        this.health = Phaser.Math.Clamp(this.health - 35, 0,100)
+        events.emit('health-changed', this.health)
+        const startColor = Phaser.Display.Color.ValueToColor(0xffffff)
+        const endColor = Phaser.Display.Color.ValueToColor(0xff0000)
+        this.scene.tweens.addCounter({
+            from: 0,
+            to: 100,
+            duration: 100,
+            repeat: 10,
+            yoyo: true,
+            ease: Phaser.Math.Easing.Sine.InOut,
+            onUpdate: tween => {
+                const value = tween.getValue()
+                const colorObject = Phaser.Display.Color.Interpolate.ColorWithColor(
+                    startColor,
+                    endColor,
+                    100,
+                    value
+                )
+                const color = Phaser.Display.Color.GetColor(
+                    colorObject.r,
+                    colorObject.g,
+                    colorObject.b
+                )
+                this.sprite.setTint(color)
+            }
+        })
+        this.stateMachine.setState('idle')
     }
         
 

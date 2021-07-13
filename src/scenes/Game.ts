@@ -4,6 +4,7 @@ import PlayerController from './PlayerController'
 import ObsticalesController from './ObsticalesController'
 import MienenguyController from './MienenguyController'
 import MiniMienenguyController from './MiniMienenguyController'
+import BlueMienenguyController from './BlueMienenguyController'
 import EmptyLorenController from './EmptyLorenController'
 import DestroyBoxController from './DestroyBoxController'
 import ElevatorController from './ElevatorController'
@@ -15,9 +16,11 @@ export default class Game extends Phaser.Scene {
 
     private player?: Phaser.Physics.Matter.Sprite
     private playerController?: PlayerController
+    private blueMinenguyController?: BlueMienenguyController
     private obstacles!: ObsticalesController
     private mienenguy: MienenguyController[] = []
     private miniMienenguy: MiniMienenguyController[] = []
+    private blueMienenguy: BlueMienenguyController[] = []
     private emptyLore: EmptyLorenController[] = []
     private destroyBox: DestroyBoxController[] = []
     private elevator: ElevatorController[] = []
@@ -54,6 +57,7 @@ export default class Game extends Phaser.Scene {
         this.load.atlas('coal-guy', 'assets/coal_guy2.png', 'assets/coal_guy2.json')
         this.load.atlas('mienenguy', 'assets/mienenguy.png', 'assets/mienenguy.json')
         this.load.atlas('miniMienenguy', 'assets/miniMienenguy.png', 'assets/miniMienenguy.json')
+        this.load.atlas('blueMienenguy', 'assets/blueMienenguy.png', 'assets/blueMienenguy.json')
         this.load.atlas('destroyBox', 'assets/destroyBox.png', 'assets/destroyBox.json')
         this.load.image('tiles', 'assets/tiles.png')
         this.load.tilemapTiledJSON('tilemap', 'assets/game2.json')
@@ -129,6 +133,16 @@ export default class Game extends Phaser.Scene {
                         .setFixedRotation()
                     this.mienenguy.push(new MienenguyController(this, mienenguy,this.mienenGuySound))
                     this.obstacles.add('mienenguy', mienenguy.body as MatterJS.BodyType)
+                    break
+                }
+
+                case 'blueMienenguy-spawn':{
+                    const blueMienenguy = this.matter.add.sprite(x,y, 'blueMienenguy')
+                        .setScale(1.2)    
+                        .setFixedRotation()
+                    this.blueMinenguyController = new BlueMienenguyController(this, blueMienenguy, this.mienenGuySound)
+                    this.blueMienenguy.push(this.blueMinenguyController)
+                    this.obstacles.add('blueMineneguy', blueMienenguy.body as MatterJS.BodyType)
                     break
                 }
 
@@ -380,7 +394,11 @@ export default class Game extends Phaser.Scene {
         const overlay = map.createLayer('overlay', tileset)
         this.matter.world.convertTilemapLayer(ground)
         
-        
+        events.on('BossIsDead', this.bossIsDead, this)
+    }
+    private bossISDead = false
+    private bossIsDead(){
+        this.bossISDead = true
     }
     
 
@@ -388,16 +406,23 @@ export default class Game extends Phaser.Scene {
        this.mienenguy.forEach(mienenguy => mienenguy.destroy())
        this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy())
        this.emptyLore.forEach(emptyLore => emptyLore.destroy())
+       this.blueMienenguy.forEach(blueMienenguy => blueMienenguy.destroy())
     }
 
     update(t: number, dt: number) {
         this.playerController?.update(dt)
-            
+        var playX = this.playerController?.getX()
+        if(!this.bossISDead){
+            this.blueMinenguyController?.setPlayerX(playX)   
+        }
+        
         this.mienenguy.forEach(mienenguy => mienenguy.update(dt))
         this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.update(dt))
         this.emptyLore.forEach(emptyLore => emptyLore.update(dt))
         this.elevator.forEach(elevator => elevator.update(dt))
         this.breakingWood.forEach(breakingWood => breakingWood.update(dt))
+        this.blueMienenguy.forEach(blueMienenguy => blueMienenguy.update(dt))
+
 
         
 
