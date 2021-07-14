@@ -12,7 +12,7 @@ const config: Phaser.Types.Core.GameConfig = {
 	physics: {
 		default: 'matter',
 		matter: {
-			debug: true
+			debug: false
 		}
 	},
 	scene: [TitleScene, Game, UI, EndScreen, LoseScreen]

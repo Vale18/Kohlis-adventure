@@ -110,7 +110,7 @@ export default class Game extends Phaser.Scene {
             const { x = 0, y = 0, name, width = 0, height = 0 } = objData
         
             switch (name) {
-                case 'penguin-spawn': {
+                case 'player-spawn': {
                     this.player = this.matter.add.sprite(x + (width*0.5), y, 'coal-guy')
                         .setScale(0.8)
                         .setFixedRotation()
