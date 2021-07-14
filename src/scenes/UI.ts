@@ -63,7 +63,7 @@ export default class UI extends Phaser.Scene{
         events.on('info11', this.readInfo11, this)
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
-         events.off('diamond-collected',this.handelDiamondCollected, this),
+         
          events.off('bigdiamond-collected',this.handelBigDiamondCollected, this)
          events.off('info', this.readInfo, this),
          events.off('info2', this.readInfo2, this)
@@ -99,6 +99,11 @@ export default class UI extends Phaser.Scene{
             this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
         }
         else{
+            events.emit('changeToEndscreen', this.diamondCollected)
+            events.off('diamond-collected',this.handelDiamondCollected, this)
+            events.off('bigdiamond-collected',this.handelBigDiamondCollected, this)
+            this.scene.pause('game')
+            this.scene.start('loseScreen', {score: this.diamondCollected })
             this.nonoSound.play()
         }
         
@@ -280,8 +285,9 @@ export default class UI extends Phaser.Scene{
 
     private showEndscreen(){
         events.emit('changeToEndscreen', this.diamondCollected)
-        
-        this.scene.start('endScreen')
+        events.off('diamond-collected',this.handelDiamondCollected, this)
+        events.off('bigdiamond-collected',this.handelBigDiamondCollected, this)
+        this.scene.start('endScreen', { score: this.diamondCollected })
     }
 
 }

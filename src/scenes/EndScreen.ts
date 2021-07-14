@@ -5,34 +5,40 @@ export default class EndScreen extends Phaser.Scene{
 
     private scoreLabel!: Phaser.GameObjects.Text
     private score = 0
+    private gameScene
 
-    constructor() {
+    constructor(gameScene: Phaser.Scene) {
 		super({
             key:'endScreen'
         });
+        this.gameScene = gameScene
 	}
     preload() {
-        this.load.image('background', 'assets/winning.png');
-        this.load.image('diamond', 'assets/diamond2.png')
+        this.load.image('winn-background', 'assets/winning.png');
+        this.load.image('dia', 'assets/diamond2.png')
         this.scene.remove('titleScene')
         
     };
 
-    create() {
+    create(data) {
         
-        events.on('changeToEndscreen', this.setDiamondScore, this)
+        this.score = data.score
         this.scene.bringToTop('endScreen')
         
-        const winnbg = this.add.image(0,0,'background');
+        const winnbg = this.add.image(0,0,'winn-background');
             winnbg.setOrigin(0,0);
-        const uiDiamond = this.add.image(20,50, 'diamond')
+        this.add.image(40,77, 'dia')
         .setScale(1)
-        this.scoreLabel = this.add.text(35,35, `${this.score}`,{
+        this.add.text(65,65, `${this.score}`,{
             fontSize: '32px'
         })
-        const text = this.add.text(200,200, 'Noch mal!!');
-        text.setInteractive({ useHandCursor: true });
-        text.on('pointerdown', () => this.clickButton());
+        const restart = this.add.text(245,400, 'restart!', {
+            color: '0x00ff00',
+            fontSize: '22px',
+            fontStyle: 'Bold'
+        });
+        restart.setInteractive({ useHandCursor: true });
+        restart.on('pointerdown', () => this.clickButton());
     };
 
     private setDiamondScore(score: number){
@@ -40,6 +46,8 @@ export default class EndScreen extends Phaser.Scene{
     }
 
     private clickButton() {
+        // this.scene.manager.remove('game')
+        // this.scene.manager.add('game', start)
         
         this.scene.start('game');
     }

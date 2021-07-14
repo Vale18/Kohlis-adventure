@@ -399,10 +399,22 @@ export default class Game extends Phaser.Scene {
         this.matter.world.convertTilemapLayer(ground)
         
         events.on('BossIsDead', this.bossIsDead, this)
+        events.once('Ende', this.ende, this)
+
     }
+
+    private ende(){
+        console.log('Das ist das Ende')
+        events.emit('EndScreen')
+        this.destroy()
+        // this.scene.start('endScreen')
+        
+    }
+
     private bossISDead = false
     private bossIsDead(){
         this.bossISDead = true
+        events.off('BossIsDead', this.bossIsDead, this)
     }
     
 
@@ -411,14 +423,13 @@ export default class Game extends Phaser.Scene {
        this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy())
        this.emptyLore.forEach(emptyLore => emptyLore.destroy())
        this.blueMienenguy.forEach(blueMienenguy => blueMienenguy.destroy())
+       
     }
 
     update(t: number, dt: number) {
         this.playerController?.update(dt)
         var playX = this.playerController?.getX()
-        if(!this.bossISDead){
-            this.blueMinenguyController?.setPlayerX(playX)   
-        }
+        this.blueMinenguyController?.setPlayerX(playX)   
         
         this.mienenguy.forEach(mienenguy => mienenguy.update(dt))
         this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.update(dt))

@@ -43,8 +43,8 @@ export default class BlueMienenguyController{
         .addState('dead')
         .setState('move')
 
-        
-        events.on('kill-blueMienenguy', this.kill, this)
+        this.isDead = false
+        events.once('kill-blueMienenguy', this.kill, this)
         
     }
 
@@ -84,7 +84,8 @@ export default class BlueMienenguyController{
                 onComplete: () => {
                     this.sprite.destroy()
                     events.emit('BossIsDead')
-                    events.emit('EndScreen')
+                    events.emit('Ende')
+                    
                 }
             })
         }

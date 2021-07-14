@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.5" tiledversion="1.6.0" name="Mine2" tilewidth="70" tileheight="70" tilecount="90" columns="6">
- <image source="tiles_new.png" width="421" height="1051"/>
+<tileset version="1.5" tiledversion="1.6.0" name="Miene" tilewidth="70" tileheight="70" tilecount="90" columns="6">
+ <image source="tiles.png" width="421" height="1051"/>
  <tile id="0">
   <properties>
    <property name="collides" type="bool" value="true"/>
@@ -51,9 +51,19 @@
    <property name="collides" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="18">
+ <tile id="24">
   <properties>
-   <property name="collides" type="bool" value="true"/>
+   <property name="collides" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="25">
+  <properties>
+   <property name="collides" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="26">
+  <properties>
+   <property name="collides" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="42">
@@ -76,11 +86,6 @@
    <property name="collides" type="bool" value="true"/>
   </properties>
  </tile>
- <tile id="52">
-  <properties>
-   <property name="collides" type="bool" value="true"/>
-  </properties>
- </tile>
  <tile id="54">
   <properties>
    <property name="collides" type="bool" value="true"/>
@@ -92,11 +97,6 @@
   </properties>
  </tile>
  <tile id="56">
-  <properties>
-   <property name="collides" type="bool" value="true"/>
-  </properties>
- </tile>
- <tile id="58">
   <properties>
    <property name="collides" type="bool" value="true"/>
   </properties>
