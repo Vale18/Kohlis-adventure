@@ -91,18 +91,19 @@ export default class UI extends Phaser.Scene{
             this.graphics.fillStyle(0x00ff00)
             this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
         }
-        else if(prozent < 0.5 && prozent > 0.25){
+        else if(prozent > 0.25){
             this.graphics.fillStyle(0xffa500)
             this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
-        }else if (prozent > 0 && prozent < 0.25){
+        }else if (prozent > 0){
             this.graphics.fillStyle(0xFF0000)
             this.graphics.fillRoundedRect(10, 10,width*prozent, 20, 5) 
         }
-        else{
+        else if(prozent == 0){
             events.emit('changeToEndscreen', this.diamondCollected)
             events.off('diamond-collected',this.handelDiamondCollected, this)
             events.off('bigdiamond-collected',this.handelBigDiamondCollected, this)
             this.scene.pause('game')
+            events.emit('Ende')
             this.scene.start('loseScreen', {score: this.diamondCollected })
             this.nonoSound.play()
         }
@@ -110,17 +111,23 @@ export default class UI extends Phaser.Scene{
     }
 
     private changeTheHealth(value: number){
+        if(value >100){
+            value = 100
+        }
         this.tweens.addCounter({
             from: this.lastHealth,
             to: value,
             duration: 200,
             onUpdate: tween => {
                 const value = tween.getValue()
+                
                 this.setHealthBar(value)
             }
         })
+        console.log("Leben:" +value)
         
         this.lastHealth = value
+        console.log("Leben Alt " + this.lastHealth)
     }
 
 
@@ -284,6 +291,7 @@ export default class UI extends Phaser.Scene{
     }
 
     private showEndscreen(){
+        events.emit('Ende')
         events.emit('changeToEndscreen', this.diamondCollected)
         events.off('diamond-collected',this.handelDiamondCollected, this)
         events.off('bigdiamond-collected',this.handelBigDiamondCollected, this)

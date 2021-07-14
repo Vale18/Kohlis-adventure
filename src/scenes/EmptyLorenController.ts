@@ -91,6 +91,7 @@ export default class EmptyLorenController{
 
     private moveRightOnEnter(){
         this.moveTime = 0
+        this.mienenCartSound.play()
     }
 
     private moveRightOnUpdate(dt: number){

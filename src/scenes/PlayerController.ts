@@ -58,7 +58,7 @@ export default class PlayerController{
         this.jumpSound = jumpSound
         this.lifeSound = lifeSound
         this.damageSound = damageSound
-        this.BossLifePoints = 1
+        this.BossLifePoints = 3
 
         this.createAnimations()
 

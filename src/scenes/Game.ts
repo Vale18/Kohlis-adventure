@@ -405,7 +405,8 @@ export default class Game extends Phaser.Scene {
 
     private ende(){
         console.log('Das ist das Ende')
-        events.emit('EndScreen')
+        // events.emit('EndScreen')
+        this.mienenCartSound.stop()
         this.destroy()
         // this.scene.start('endScreen')
         
@@ -423,6 +424,7 @@ export default class Game extends Phaser.Scene {
        this.miniMienenguy.forEach(miniMienenguy => miniMienenguy.destroy())
        this.emptyLore.forEach(emptyLore => emptyLore.destroy())
        this.blueMienenguy.forEach(blueMienenguy => blueMienenguy.destroy())
+
        
     }
 

@@ -85,6 +85,7 @@ export default class BlueMienenguyController{
                     this.sprite.destroy()
                     events.emit('BossIsDead')
                     events.emit('Ende')
+                    events.emit('EndScreen')
                     
                 }
             })
