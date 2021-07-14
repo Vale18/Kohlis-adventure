@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.5" tiledversion="1.6.0" name="Mine2" tilewidth="70" tileheight="70" tilecount="90" columns="6">
- <image source="tiles_new.png" width="421" height="1051"/>
+ <image source="tiles.png" width="421" height="1051"/>
  <tile id="0">
   <properties>
    <property name="collides" type="bool" value="true"/>
