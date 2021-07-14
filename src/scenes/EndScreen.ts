@@ -24,7 +24,7 @@ export default class EndScreen extends Phaser.Scene{
         this.scene.bringToTop('endScreen')
         
         const winnbg = this.add.image(0,0,'background');
-        winnbg.setOrigin(0,0);
+            winnbg.setOrigin(0,0);
         const uiDiamond = this.add.image(20,50, 'diamond')
         .setScale(1)
         this.scoreLabel = this.add.text(35,35, `${this.score}`,{
