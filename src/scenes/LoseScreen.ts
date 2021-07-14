@@ -1,44 +1,43 @@
 import Phaser from "phaser"
 import { events } from './EventCenter'
 
-export default class EndScreen extends Phaser.Scene{
+export default class LoseScreen extends Phaser.Scene{
 
     private scoreLabel!: Phaser.GameObjects.Text
-    private score = 0
-    private gameScene
+    private score
 
-    constructor(gameScene: Phaser.Scene) {
+
+    constructor() {
 		super({
-            key:'endScreen'
+            key:'loseScreen'
         });
-        this.gameScene = gameScene
+        
 	}
     preload() {
-        this.load.image('winn-background', 'assets/winning.png');
+        this.load.image('lose-background', 'assets/loser.png');
         this.load.image('dia', 'assets/diamond2.png')
         this.scene.remove('titleScene')
         
     };
 
     create(data) {
-        
         this.score = data.score
+        events.on('changeToEndscreen', this.setDiamondScore, this)
         this.scene.bringToTop('endScreen')
         
-        const winnbg = this.add.image(0,0,'winn-background');
+        const winnbg = this.add.image(0,0,'lose-background');
             winnbg.setOrigin(0,0);
-        this.add.image(40,77, 'dia')
-        .setScale(1)
-        this.add.text(65,65, `${this.score}`,{
-            fontSize: '32px'
-        })
-        const restart = this.add.text(245,400, 'restart!', {
-            color: '0x00ff00',
+            this.add.image(40,77, 'dia')
+            .setScale(1)
+            this.add.text(65,65, `${this.score}`,{
+                fontSize: '32px'
+            })
+        const text = this.add.text(250,160, 'restart!',{
             fontSize: '22px',
             fontStyle: 'Bold'
         });
-        restart.setInteractive({ useHandCursor: true });
-        restart.on('pointerdown', () => this.clickButton());
+        text.setInteractive({ useHandCursor: true });
+        text.on('pointerdown', () => this.clickButton());
     };
 
     private setDiamondScore(score: number){
