@@ -9,14 +9,17 @@ export default class EmptyLorenController{
     private stateMachine: StateMachine
     private obsticales: ObsticalesController
 
+    private mienenCartSound
+
     private moveTime = 0
 
-    private moveRichtung = 1
+    
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, obsticales: ObsticalesController){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, obsticales: ObsticalesController, mienenCartSound: Phaser.Sound.BaseSound){
         this.scene = scene
         this.sprite = sprite
         this.obsticales = obsticales
+        this.mienenCartSound = mienenCartSound
         this.stateMachine = new StateMachine(this, 'emptyLore')
 
         this.stateMachine.addState('idle',{
@@ -33,67 +36,74 @@ export default class EmptyLorenController{
         .setState('idle')
 
         this.sprite.setOnCollide((data: MatterJS.ICollisionPair) => {
-            const body = data.bodyB as MatterJS.BodyType
+            const body = data.bodyA as MatterJS.BodyType
             
-            if(this.obsticales.is('rightWall', body)){
-                console.log("rechtewand")
-                this.stateMachine.setState('move-left')
-                return
-            }
 
             if(this.obsticales.is('leftWall', body)){
-                console.log("linkewand")
+                console.log('linke Wand')
+                // this.stateMachine.setState('move-right')
                 this.stateMachine.setState('move-right')
-                return
+                this.sprite.setVelocityX(3)
+            }
+            if(this.obsticales.is('rightWall', body)){
+                this.stateMachine.setState('move-left')
             }
         })
 
+        events.on('startMienenCart', this.startTheCart, this)
+        events.on('stopMienenCart', this.stopTheCart, this)
 
     }
 
+    private startTheCart(){
+        this.stateMachine.setState('move-right')
+    }
+
+    private stopTheCart(){
+        this.stateMachine.setState('idle')
+    }
 
     
 
-    public getRichtung(){
-        console.log(this.moveRichtung)
-        return this.moveRichtung
-    }
+    
 
     private idleOnEnter(){
-        this.stateMachine.setState('move-right')
+        // this.stateMachine.setState('move-left')
+        this.mienenCartSound.stop()
     }
     
     private moveLeftOnEnter(){
         this.moveTime = 0
-        this.sprite.flipX = false
-        this.moveRichtung = 1
+        this.mienenCartSound.play()
     }
 
 
     private moveLeftOnUpdate(dt: number){
         this.moveTime +=dt
         this.sprite.setVelocityX(-3)
-        if(this.moveTime > 5000){
-            this.stateMachine.setState('move-right')
-        }
+        console.log('Speed' + this.sprite.body.velocity)
+        
+        
+        // if(this.moveTime > 9000){
+        //     this.stateMachine.setState('move-right')
+        // }
     }
 
     private moveRightOnEnter(){
         this.moveTime = 0
-        this.sprite.flipX = false
-        this.moveRichtung = 2
     }
 
     private moveRightOnUpdate(dt: number){
         this.moveTime +=dt
         this.sprite.setVelocityX(3)
-        if(this.moveTime > 5000){
-            this.stateMachine.setState('move-left')
-        }
+        // if(this.moveTime > 9000){
+        //     this.stateMachine.setState('move-left')
+        // }
     }
 
     destroy(){
-        
+        events.off('startMienenCart', this.startTheCart, this)
+        events.off('stopMienenCart', this.stopTheCart, this)
     }
     update(dt: number){
         this.stateMachine.update(dt)

@@ -9,11 +9,13 @@ export default class MienenguyController{
     private stateMachine: StateMachine
 
     private moveTime = 0
+    private mienenGuySound
 
 
-    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite){
+    constructor(scene: Phaser.Scene, sprite: Phaser.Physics.Matter.Sprite, mienenGuySound: Phaser.Sound.BaseSound){
         this.scene = scene
         this.sprite = sprite
+        this.mienenGuySound = mienenGuySound
         this.stateMachine = new StateMachine(this, 'mienenguy')
         this.createAnimations()
         this.stateMachine.addState('idle',{
@@ -46,6 +48,8 @@ export default class MienenguyController{
             return
         }
         events.off('kill-mienenguy', this.killMienenguy, this)
+        this.sprite.play('idle')
+        this.mienenGuySound.play()
         this.scene.tweens.add({
             targets: this.sprite,
             displayHeight: 0,
