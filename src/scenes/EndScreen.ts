@@ -15,13 +15,13 @@ export default class EndScreen extends Phaser.Scene{
         this.load.image('background', 'assets/winning.png');
         this.load.image('diamond', 'assets/diamond2.png')
         this.scene.remove('titleScene')
-        this.scene.bringToTop('endScreen')
+        
     };
 
     create() {
         
         events.on('changeToEndscreen', this.setDiamondScore, this)
-        
+        this.scene.bringToTop('endScreen')
         
         const winnbg = this.add.image(0,0,'background');
         winnbg.setOrigin(0,0);
@@ -30,7 +30,7 @@ export default class EndScreen extends Phaser.Scene{
         this.scoreLabel = this.add.text(35,35, `${this.score}`,{
             fontSize: '32px'
         })
-        const text = this.add.text(200,200, 'Neues Spiel starten');
+        const text = this.add.text(200,200, 'Noch mal!!');
         text.setInteractive({ useHandCursor: true });
         text.on('pointerdown', () => this.clickButton());
     };
@@ -41,7 +41,7 @@ export default class EndScreen extends Phaser.Scene{
 
     private clickButton() {
         
-        this.scene.run('game');
+        this.scene.start('game');
     }
 
 

@@ -280,7 +280,7 @@ export default class UI extends Phaser.Scene{
 
     private showEndscreen(){
         events.emit('changeToEndscreen', this.diamondCollected)
-        this.scene.switch('endScreen')
+        this.scene.start('endScreen')
     }
 
 }

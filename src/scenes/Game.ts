@@ -37,10 +37,11 @@ export default class Game extends Phaser.Scene {
 
     constructor() {
         super('game')
+        // this.scene.restart()
     }
 
     init() {
-        this.scene.restart()
+        
         this.cursors = this.input.keyboard.createCursorKeys()
         this.obstacles = new ObsticalesController()
         this.mienenguy = []
@@ -48,6 +49,8 @@ export default class Game extends Phaser.Scene {
         this.emptyLore = []
         this.destroyBox = []
         this.elevator = []
+        this.blueMienenguy = []
+        this.breakingWood = []
 
         this.events.once(Phaser.Scenes.Events.DESTROY, () =>{
             this.destroy()

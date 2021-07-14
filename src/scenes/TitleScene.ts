@@ -21,7 +21,7 @@ export default class TitleScene extends Phaser.Scene{
         text.on('pointerdown', () => this.clickButton());
     };
     private clickButton() {
-        this.scene.switch('game')
+        this.scene.start('game')
         // this.scene.launch('game')
         
     }
