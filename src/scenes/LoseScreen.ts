@@ -32,9 +32,10 @@ export default class LoseScreen extends Phaser.Scene{
             this.add.text(65,65, `${this.score}`,{
                 fontSize: '32px'
             })
-        const text = this.add.text(250,160, 'restart!',{
+        const text = this.add.text(250,160, 'Restart!',{
             fontSize: '22px',
-            fontStyle: 'Bold'
+            fontStyle: 'Bold',
+            fontFamily: 'Calibri'
         });
         text.setInteractive({ useHandCursor: true });
         text.on('pointerdown', () => this.clickButton());

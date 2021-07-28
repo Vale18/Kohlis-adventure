@@ -32,10 +32,11 @@ export default class EndScreen extends Phaser.Scene{
         this.add.text(65,65, `${this.score}`,{
             fontSize: '32px'
         })
-        const restart = this.add.text(245,400, 'restart!', {
+        const restart = this.add.text(245,400, 'Restart!', {
             color: '0x00ff00',
             fontSize: '22px',
-            fontStyle: 'Bold'
+            fontStyle: 'Bold',
+            fontFamily: 'Calibri'
         });
         restart.setInteractive({ useHandCursor: true });
         restart.on('pointerdown', () => this.clickButton());

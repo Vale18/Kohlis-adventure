@@ -193,7 +193,7 @@ export default class UI extends Phaser.Scene{
 
     }
     private readInfo6(){
-        this.infoText = "Benutz den Fahrstuhl, er befördert dich nach oben"
+        this.infoText = "Benutze den Fahrstuhl, er befördert dich nach oben"
         if(this.show == true ){
             this.info.destroy()
         }
@@ -217,7 +217,7 @@ export default class UI extends Phaser.Scene{
 
     }
     private readInfo8(){
-        this.infoText = " <- Diamanten-Miene"
+        this.infoText = " <- Diamanten-Mine"
         if(this.show == true ){
             this.info.destroy()
         }
@@ -256,7 +256,7 @@ export default class UI extends Phaser.Scene{
     }
 
     private readInfo11(){
-        this.infoText = "Kohle-Miene ->"
+        this.infoText = "Kohle-Mine ->"
         if(this.show == true ){
             this.info.destroy()
         }
